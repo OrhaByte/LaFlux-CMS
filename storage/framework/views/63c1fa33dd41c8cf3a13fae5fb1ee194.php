@@ -1,1 +1,0 @@
-<?php if($status==1): ?> <span class="glyphicon glyphicon-ok"></span> <?php else: ?> <span class="glyphicon glyphicon-remove"></span> <?php endif; ?><?php /**PATH /var/www/html/laravel-admin/storage/framework/views/8cb061a5947dcc68212b3a9902af2012.blade.php ENDPATH**/ ?>

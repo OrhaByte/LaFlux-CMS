@@ -1,1 +1,0 @@
-<?php if($status==1): ?> <span class="glyphicon glyphicon-ok"> Published</span> <?php else: ?> <span class="glyphicon glyphicon-remove"> Unpublished</span> <?php endif; ?><?php /**PATH /var/www/html/laravel-admin/storage/framework/views/c07fd1675e490d46377bbadfec5450bf.blade.php ENDPATH**/ ?>
