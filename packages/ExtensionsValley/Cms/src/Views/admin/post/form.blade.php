@@ -106,6 +106,10 @@
                             </div>
                         </div>
 
+                        @if(isset($post))
+                            @include('Cms::admin.partials.versions', ['versions' => $post->versions])
+                        @endif
+
                         <div class="panel panel-default">
                             <div class="panel-heading"><strong>Category &amp; Tags</strong></div>
                             <div class="panel-body">

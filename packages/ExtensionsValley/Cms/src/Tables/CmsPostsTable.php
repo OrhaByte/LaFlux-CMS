@@ -62,6 +62,17 @@ class CmsPostsTable extends BaseTable
         }
 
         return datatables()->of($query)
+            ->filter(function ($q) use ($request) {
+                $kw = trim((string) ($request->input('search.value') ?? $request->get('customsearch', '')));
+                if ($kw !== '') {
+                    $q->where(function ($sub) use ($kw) {
+                        $sub->where('p.title', 'like', "%{$kw}%")
+                            ->orWhere('p.slug', 'like', "%{$kw}%")
+                            ->orWhere('p.language_code', 'like', "%{$kw}%")
+                            ->orWhere('c.name', 'like', "%{$kw}%");
+                    });
+                }
+            })
             ->addColumn('sl', fn ($row) => '<input type="checkbox" name="cid[]" value="' . (int) $row->id . '" class="cid_checkbox flat"/>')
             ->editColumn('language_code', fn ($row) => '<span class="label label-primary">' . strtoupper(e($row->language_code ?? 'en')) . '</span>')
             ->editColumn('category_name', fn ($row) => e($row->category_name ?: 'Uncategorized'))

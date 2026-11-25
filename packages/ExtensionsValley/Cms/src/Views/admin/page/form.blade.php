@@ -105,6 +105,10 @@
                             </div>
                         </div>
 
+                        @if(isset($page))
+                            @include('Cms::admin.partials.versions', ['versions' => $page->versions])
+                        @endif
+
                         <div class="panel panel-default">
                             <div class="panel-heading"><strong>Featured Image</strong></div>
                             <div class="panel-body">

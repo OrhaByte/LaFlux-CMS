@@ -7,6 +7,7 @@ use ExtensionsValley\Cms\Models\BannerSlide;
 use ExtensionsValley\Cms\Models\Category;
 use ExtensionsValley\Cms\Models\CmsForm;
 use ExtensionsValley\Cms\Models\CmsFormField;
+use ExtensionsValley\Cms\Models\ContentVersion;
 use ExtensionsValley\Cms\Models\Language;
 use ExtensionsValley\Cms\Models\Menu;
 use ExtensionsValley\Cms\Models\MenuItem;
@@ -180,6 +181,30 @@ class CmsTest extends TestCase
         $this->get('/en/page/about')->assertStatus(200)->assertSee('English body')->assertSee('dir="ltr"', false);
         $this->get('/ar/page/about')->assertStatus(200)->assertSee('Arabic body')->assertSee('dir="rtl"', false);
         $this->get('/zz/page/about')->assertStatus(404);
+    }
+
+    public function test_content_versioning_records_incrementing_snapshots_for_pages_and_posts(): void
+    {
+        $page = Page::create([
+            'language_code' => 'en',
+            'title' => 'Versioned Page v1',
+            'slug' => 'versioned-page',
+            'content' => '<p>First version</p>',
+            'status' => 1,
+            'published_at' => now(),
+        ]);
+
+        $v1 = ContentVersion::recordSnapshot('page', $page, 1);
+        $this->assertSame(1, $v1->version_number);
+
+        $page->update(['title' => 'Versioned Page v2', 'content' => '<p>Second version</p>']);
+        $v2 = ContentVersion::recordSnapshot('page', $page, 1);
+        $this->assertSame(2, $v2->version_number);
+
+        $versions = $page->versions()->get();
+        $this->assertCount(2, $versions);
+        $this->assertSame(2, $versions->first()->version_number);
+        $this->assertSame('<p>First version</p>', $versions->last()->content);
     }
 }
 

@@ -60,6 +60,16 @@ class CmsLanguagesTable extends BaseTable
         }
 
         return datatables()->of($query)
+            ->filter(function ($q) use ($request) {
+                $kw = trim((string) ($request->input('search.value') ?? $request->get('customsearch', '')));
+                if ($kw !== '') {
+                    $q->where(function ($sub) use ($kw) {
+                        $sub->where('name', 'like', "%{$kw}%")
+                            ->orWhere('code', 'like', "%{$kw}%")
+                            ->orWhere('direction', 'like', "%{$kw}%");
+                    });
+                }
+            })
             ->addColumn('sl', fn ($row) => '<input type="checkbox" name="cid[]" value="' . (int) $row->id . '" class="cid_checkbox flat"/>')
             ->editColumn('code', fn ($row) => '<code>' . e(strtolower($row->code)) . '</code>')
             ->editColumn('direction', fn ($row) => strtoupper(e($row->direction)))

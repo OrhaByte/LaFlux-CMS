@@ -37,6 +37,13 @@ class Page extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function versions()
+    {
+        return $this->hasMany(ContentVersion::class, 'content_id')
+            ->where('content_type', 'page')
+            ->orderByDesc('version_number');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 1)

@@ -62,6 +62,15 @@ class CmsBannersTable extends BaseTable
         }
 
         return datatables()->of($query)
+            ->filter(function ($q) use ($request) {
+                $kw = trim((string) ($request->input('search.value') ?? $request->get('customsearch', '')));
+                if ($kw !== '') {
+                    $q->where(function ($sub) use ($kw) {
+                        $sub->where('b.name', 'like', "%{$kw}%")
+                            ->orWhere('b.slug', 'like', "%{$kw}%");
+                    });
+                }
+            })
             ->addColumn('sl', fn ($row) => '<input type="checkbox" name="cid[]" value="' . (int) $row->id . '" class="cid_checkbox flat"/>')
             ->editColumn('slug', fn ($row) => '<code>[banner slug="' . e($row->slug) . '"]</code>')
             ->editColumn('slides_count', fn ($row) => '<span class="badge">' . (int) $row->slides_count . '</span>')

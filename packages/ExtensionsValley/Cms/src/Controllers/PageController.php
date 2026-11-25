@@ -3,6 +3,7 @@
 namespace ExtensionsValley\Cms\Controllers;
 
 use ExtensionsValley\Cms\Helpers\CmsHelper;
+use ExtensionsValley\Cms\Models\ContentVersion;
 use ExtensionsValley\Cms\Models\Page;
 use ExtensionsValley\Cms\Validators\PageValidation;
 use ExtensionsValley\Dashboard\Models\traits\DashboardTraits;
@@ -50,7 +51,7 @@ class PageController extends Controller
             $featuredImage = CmsHelper::uploadFeaturedImage($request->file('featured_image'), 'pages');
         }
 
-        Page::create([
+        $page = Page::create([
             'language_code' => $lang,
             'title' => $request->input('title'),
             'slug' => $slug,
@@ -65,6 +66,10 @@ class PageController extends Controller
             'author_id' => Auth::guard('admin')->id(),
         ]);
 
+        if ((int) $page->status === 1) {
+            ContentVersion::recordSnapshot('page', $page);
+        }
+
         return redirect('admin/ExtensionsValley/cms/list/cms_pages')
             ->with(['message' => 'Page added successfully!']);
     }
@@ -72,7 +77,7 @@ class PageController extends Controller
     public function editPage($id)
     {
         $title = 'Edit Page';
-        $page = Page::findOrFail($id);
+        $page = Page::with(['versions.author'])->findOrFail($id);
 
         return view('Cms::admin.page.form', compact('title', 'page'));
     }
@@ -80,7 +85,7 @@ class PageController extends Controller
     public function viewPage($id)
     {
         $title = 'View Page';
-        $page = Page::findOrFail($id);
+        $page = Page::with(['versions.author'])->findOrFail($id);
         $viewmode = 'view';
 
         return view('Cms::admin.page.form', compact('title', 'page', 'viewmode'));
@@ -129,6 +134,10 @@ class PageController extends Controller
             'status' => $request->input('status', 1),
             'published_at' => $request->filled('published_at') ? $request->input('published_at') : $page->published_at,
         ]);
+
+        if ((int) $page->status === 1) {
+            ContentVersion::recordSnapshot('page', $page);
+        }
 
         return redirect('admin/ExtensionsValley/cms/list/cms_pages')
             ->with(['message' => 'Page updated successfully!']);

@@ -4,6 +4,7 @@ namespace ExtensionsValley\Cms\Controllers;
 
 use ExtensionsValley\Cms\Helpers\CmsHelper;
 use ExtensionsValley\Cms\Models\Category;
+use ExtensionsValley\Cms\Models\ContentVersion;
 use ExtensionsValley\Cms\Models\Post;
 use ExtensionsValley\Cms\Models\Tag;
 use ExtensionsValley\Cms\Validators\PostValidation;
@@ -73,6 +74,10 @@ class PostController extends Controller
 
         $post->tags()->sync($request->input('tags', []));
 
+        if ((int) $post->status === 1) {
+            ContentVersion::recordSnapshot('post', $post);
+        }
+
         return redirect('admin/ExtensionsValley/cms/list/cms_posts')
             ->with(['message' => 'Post added successfully!']);
     }
@@ -80,7 +85,7 @@ class PostController extends Controller
     public function editPost($id)
     {
         $title = 'Edit Post';
-        $post = Post::with('tags')->findOrFail($id);
+        $post = Post::with(['tags', 'versions.author'])->findOrFail($id);
         $categories = Category::getCategories();
         $tags = Tag::getTags();
         $selectedTags = $post->tags->pluck('id')->toArray();
@@ -91,7 +96,7 @@ class PostController extends Controller
     public function viewPost($id)
     {
         $title = 'View Post';
-        $post = Post::with('tags')->findOrFail($id);
+        $post = Post::with(['tags', 'versions.author'])->findOrFail($id);
         $categories = Category::getCategories();
         $tags = Tag::getTags();
         $selectedTags = $post->tags->pluck('id')->toArray();
@@ -146,6 +151,10 @@ class PostController extends Controller
         ]);
 
         $post->tags()->sync($request->input('tags', []));
+
+        if ((int) $post->status === 1) {
+            ContentVersion::recordSnapshot('post', $post);
+        }
 
         return redirect('admin/ExtensionsValley/cms/list/cms_posts')
             ->with(['message' => 'Post updated successfully!']);
