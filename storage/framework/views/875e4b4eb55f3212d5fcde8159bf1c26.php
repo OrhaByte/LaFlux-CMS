@@ -1,0 +1,1 @@
+<input type="checkbox" name="cid[]" value="<?php echo e($id); ?>" class="cid_checkbox"/><?php /**PATH /var/www/html/laravel-admin/storage/framework/views/78d279d5264293e2a7198f49acc43bca.blade.php ENDPATH**/ ?>

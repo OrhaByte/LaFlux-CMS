@@ -1,0 +1,1 @@
+<?php echo e(date("M-j-Y",strtotime($created_at))); ?><?php /**PATH /var/www/html/laravel-admin/storage/framework/views/e8f64756b24292ac32669bda06aca30d.blade.php ENDPATH**/ ?>
