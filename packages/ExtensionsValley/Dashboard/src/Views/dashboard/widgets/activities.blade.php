@@ -72,6 +72,9 @@
                 <a href="{{ route('extensionsvalley.cms.media') }}" class="btn btn-dark btn-sm">
                     <i class="fa fa-picture-o"></i> Media Library
                 </a>
+                <a href="{{ route('extensionsvalley.cms.customizer') }}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-paint-brush"></i> Theme Customizer
+                </a>
                 <a href="{{ url('/cms') }}" target="_blank" class="btn btn-default btn-sm">
                     <i class="fa fa-external-link"></i> View Live Site
                 </a>

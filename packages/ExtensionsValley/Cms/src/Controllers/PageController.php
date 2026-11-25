@@ -3,6 +3,7 @@
 namespace ExtensionsValley\Cms\Controllers;
 
 use ExtensionsValley\Cms\Helpers\CmsHelper;
+use ExtensionsValley\Cms\Helpers\ThemeHelper;
 use ExtensionsValley\Cms\Models\ContentVersion;
 use ExtensionsValley\Cms\Models\Page;
 use ExtensionsValley\Cms\Validators\PageValidation;
@@ -51,10 +52,15 @@ class PageController extends Controller
             $featuredImage = CmsHelper::uploadFeaturedImage($request->file('featured_image'), 'pages');
         }
 
+        $template = $request->input('template', 'default') ?: 'default';
+        $templateData = $this->extractTemplateData($request, $template);
+
         $page = Page::create([
             'language_code' => $lang,
             'title' => $request->input('title'),
             'slug' => $slug,
+            'template' => $template,
+            'template_data' => $templateData,
             'content' => $request->input('content'),
             'featured_image' => $featuredImage,
             'meta_title' => $request->input('meta_title'),
@@ -121,10 +127,15 @@ class PageController extends Controller
             $featuredImage = CmsHelper::uploadFeaturedImage($request->file('featured_image'), 'pages');
         }
 
+        $template = $request->input('template', $page->template ?: 'default') ?: 'default';
+        $templateData = $this->extractTemplateData($request, $template);
+
         $page->update([
             'language_code' => $lang,
             'title' => $request->input('title'),
             'slug' => $slug,
+            'template' => $template,
+            'template_data' => $templateData,
             'content' => $request->input('content'),
             'featured_image' => $featuredImage,
             'meta_title' => $request->input('meta_title'),
@@ -141,6 +152,32 @@ class PageController extends Controller
 
         return redirect('admin/ExtensionsValley/cms/list/cms_pages')
             ->with(['message' => 'Page updated successfully!']);
+    }
+
+    protected function extractTemplateData(Request $request, string $template): array
+    {
+        $templates = ThemeHelper::getPageTemplates();
+        $fields = $templates[$template]['fields'] ?? [];
+        if (empty($fields)) {
+            return [];
+        }
+
+        $allInput = $request->input('template_data', []);
+        $raw = is_array($allInput[$template] ?? null) ? $allInput[$template] : [];
+        $clean = [];
+
+        foreach ($fields as $fKey => $fDef) {
+            $type = $fDef['type'] ?? 'text';
+            if ($type === 'toggle') {
+                $clean[$fKey] = !empty($raw[$fKey]);
+            } elseif ($type === 'number') {
+                $clean[$fKey] = max(1, (int) ($raw[$fKey] ?? ($fDef['default'] ?? 6)));
+            } else {
+                $clean[$fKey] = isset($raw[$fKey]) ? trim((string) $raw[$fKey]) : '';
+            }
+        }
+
+        return $clean;
     }
 }
 

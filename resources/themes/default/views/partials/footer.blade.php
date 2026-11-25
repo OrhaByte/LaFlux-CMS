@@ -1,5 +1,6 @@
 @php
     $siteName = \WebConf::get('site_name') ?: 'LaFlux CMS';
+    $brandingCfg = \ExtensionsValley\Cms\Helpers\ThemeHelper::getSection('branding', $currentLang->code ?? null);
 @endphp
 <footer class="lf-footer">
     <div class="lf-container">
@@ -10,7 +11,7 @@
                     <span>{{ $siteName }}</span>
                 </a>
                 <p style="font-size:0.9rem; margin:10px 0 0 0; max-width:320px;">
-                    Modern modular Laravel 13 CMS with multilingual pages, posts, menus, sliders, media library, and dynamic forms.
+                    {{ $brandingCfg['footer_tagline'] ?? 'Modern modular Laravel 13 CMS.' }}
                 </p>
             </div>
 

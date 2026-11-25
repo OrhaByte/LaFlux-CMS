@@ -13,6 +13,7 @@ class Page extends Model
     protected $table = 'cms_pages';
 
     protected $casts = [
+        'template_data' => 'array',
         'published_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
@@ -21,6 +22,8 @@ class Page extends Model
         'language_code',
         'title',
         'slug',
+        'template',
+        'template_data',
         'content',
         'featured_image',
         'meta_title',

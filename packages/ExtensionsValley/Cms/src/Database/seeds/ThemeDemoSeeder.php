@@ -13,6 +13,7 @@ use ExtensionsValley\Cms\Models\MenuItem;
 use ExtensionsValley\Cms\Models\Page;
 use ExtensionsValley\Cms\Models\Post;
 use ExtensionsValley\Cms\Models\Tag;
+use ExtensionsValley\Cms\Models\ThemeSetting;
 use Illuminate\Database\Seeder;
 
 class ThemeDemoSeeder extends Seeder
@@ -348,6 +349,134 @@ class ThemeDemoSeeder extends Seeder
         MenuItem::create(['menu_id' => $arFooter->id, 'title' => 'من نحن', 'type' => 'page', 'reference_id' => $arAbout->id, 'ordering' => 1, 'status' => 1]);
         MenuItem::create(['menu_id' => $arFooter->id, 'title' => 'خدماتنا', 'type' => 'page', 'reference_id' => $arServices->id, 'ordering' => 2, 'status' => 1]);
         MenuItem::create(['menu_id' => $arFooter->id, 'title' => 'اتصل بنا', 'type' => 'page', 'reference_id' => $arContact->id, 'ordering' => 3, 'status' => 1]);
+
+        // 9. Seed Highlights Category + 3 Feature Posts (EN & AR) and Theme Customizer defaults
+        $enHighlightsCat = Category::updateOrCreate(
+            ['slug' => 'highlights', 'language_code' => 'en'],
+            ['name' => 'Highlights', 'description' => 'Platform highlights shown on the homepage.', 'meta_title' => 'Highlights', 'status' => 1, 'created_by' => 1]
+        );
+        $arHighlightsCat = Category::updateOrCreate(
+            ['slug' => 'highlights', 'language_code' => 'ar'],
+            ['name' => 'المميزات', 'description' => 'أبرز مميزات النظام في الصفحة الرئيسية.', 'meta_title' => 'المميزات', 'status' => 1, 'created_by' => 1]
+        );
+
+        $enFeatures = [
+            ['slug' => 'modular-architecture', 'title' => 'Modular Architecture', 'excerpt' => 'Clean Laravel 13 packages for Posts, Pages, Media, Menus, Sliders, and Forms with role-based permissions.', 'featured_image' => 'themes/default/images/post-1.svg'],
+            ['slug' => 'multilingual-rtl-ready', 'title' => 'Multilingual & RTL Ready', 'excerpt' => 'Publish content in any language with automatic 2-letter URL routing and full LTR/RTL layout support.', 'featured_image' => 'themes/default/images/post-2.svg'],
+            ['slug' => 'shortcodes-dynamic-forms', 'title' => 'Shortcodes & Dynamic Forms', 'excerpt' => 'Drop responsive hero sliders and custom validated forms into any page or post with simple shortcodes.', 'featured_image' => 'themes/default/images/post-3.svg'],
+        ];
+        foreach ($enFeatures as $idx => $feat) {
+            Post::updateOrCreate(
+                ['slug' => $feat['slug'], 'language_code' => 'en'],
+                array_merge($feat, [
+                    'content' => '<p>' . $feat['excerpt'] . '</p>',
+                    'category_id' => $enHighlightsCat->id,
+                    'status' => 1,
+                    'published_at' => $now->copy()->subMinutes(10 + $idx),
+                    'author_id' => 1,
+                ])
+            );
+        }
+
+        $arFeatures = [
+            ['slug' => 'modular-architecture', 'title' => 'بنية معيارية حديثة', 'excerpt' => 'حزم لارافيل 13 نظيفة لإدارة المقالات والصفحات والوسائط والقوائم والنماذج مع نظام صلاحيات متكامل.', 'featured_image' => 'themes/default/images/post-1.svg'],
+            ['slug' => 'multilingual-rtl-ready', 'title' => 'دعم تعدد اللغات و RTL', 'excerpt' => 'انشر المحتوى بأي لغة مع روابط تلقائية ثنائية الحروف ودعم كامل للاتجاه من اليمين إلى اليسار.', 'featured_image' => 'themes/default/images/post-2.svg'],
+            ['slug' => 'shortcodes-dynamic-forms', 'title' => 'الأكواد المختصرة والنماذج', 'excerpt' => 'أضف البانرات والنماذج الديناميكية في أي صفحة أو مقال بكل سهولة.', 'featured_image' => 'themes/default/images/post-3.svg'],
+        ];
+        foreach ($arFeatures as $idx => $feat) {
+            Post::updateOrCreate(
+                ['slug' => $feat['slug'], 'language_code' => 'ar'],
+                array_merge($feat, [
+                    'content' => '<p>' . $feat['excerpt'] . '</p>',
+                    'category_id' => $arHighlightsCat->id,
+                    'status' => 1,
+                    'published_at' => $now->copy()->subMinutes(10 + $idx),
+                    'author_id' => 1,
+                ])
+            );
+        }
+
+        // English Customizer Settings
+        $enCustomizer = [
+            'hero' => ['enabled' => true, 'banner_slug' => 'home-hero', 'fallback_title' => 'LaFlux CMS', 'fallback_subtitle' => 'Build fast, modern, multilingual websites.'],
+            'highlights' => ['enabled' => true, 'eyebrow' => 'Why LaFlux CMS', 'heading' => 'Everything You Need to Launch Fast', 'subtitle' => 'A flexible, modular content platform engineered for performance and effortless administration.', 'category_id' => (string) $enHighlightsCat->id, 'tag_id' => '', 'sort_order' => 'oldest', 'limit' => 3],
+            'latest_posts' => ['enabled' => true, 'eyebrow' => 'Latest Articles', 'heading' => 'From Our Blog', 'subtitle' => 'Insights, product updates, and stories published straight from LaFlux CMS.', 'category_id' => (string) $enTech->id, 'tag_id' => '', 'sort_order' => 'latest', 'limit' => 6],
+            'contact_cta' => ['enabled' => true, 'eyebrow' => 'Get In Touch', 'heading' => 'Have a Project in Mind?', 'description' => 'Send us a message using our dynamic CMS form. Every submission is validated and stored in your LaFlux Admin inbox.', 'button_text' => 'Learn More About Us', 'button_page_slug' => 'about-us', 'form_slug' => 'contact-us'],
+            'branding' => ['primary_color' => '#2563eb', 'footer_tagline' => 'Modern modular Laravel 13 CMS with multilingual pages, posts, menus, sliders, media library, and dynamic forms.'],
+        ];
+        foreach ($enCustomizer as $secKey => $secVals) {
+            ThemeSetting::updateOrCreate(
+                ['theme_slug' => 'default', 'language_code' => 'en', 'section_key' => $secKey],
+                ['settings' => $secVals]
+            );
+        }
+
+        // Arabic Customizer Settings
+        $arCustomizer = [
+            'hero' => ['enabled' => true, 'banner_slug' => 'home-hero', 'fallback_title' => 'نظام LaFlux CMS', 'fallback_subtitle' => 'منصة إدارة محتوى حديثة متعددة اللغات.'],
+            'highlights' => ['enabled' => true, 'eyebrow' => 'لماذا LaFlux CMS', 'heading' => 'كل ما تحتاجه لإطلاق موقعك بسرعة', 'subtitle' => 'منصة مرنة وسريعة لإدارة المحتوى وتعدد اللغات بكل سهولة.', 'category_id' => (string) $arHighlightsCat->id, 'tag_id' => '', 'sort_order' => 'oldest', 'limit' => 3],
+            'latest_posts' => ['enabled' => true, 'eyebrow' => 'أحدث المقالات', 'heading' => 'من المدونة', 'subtitle' => 'مقالات وأخبار وتحديثات مباشرة من لوحة التحكم.', 'category_id' => (string) $arTech->id, 'tag_id' => '', 'sort_order' => 'latest', 'limit' => 6],
+            'contact_cta' => ['enabled' => true, 'eyebrow' => 'تواصل معنا', 'heading' => 'هل لديك مشروع في بالك؟', 'description' => 'أرسل لنا رسالتك عبر النموذج التالي وسيتواصل معك فريقنا في أقرب وقت.', 'button_text' => 'تعرف علينا أكثر', 'button_page_slug' => 'about-us', 'form_slug' => 'contact-us'],
+            'branding' => ['primary_color' => '#2563eb', 'footer_tagline' => 'نظام إدارة محتوى حديث مبني على لارافيل 13 مع دعم كامل لتعدد اللغات و RTL.'],
+        ];
+        foreach ($arCustomizer as $secKey => $secVals) {
+            ThemeSetting::updateOrCreate(
+                ['theme_slug' => 'default', 'language_code' => 'ar', 'section_key' => $secKey],
+                ['settings' => $secVals]
+            );
+        }
+
+        // 10. Assign custom Page Templates to Services & Contact pages (EN & AR)
+        $enServices->update([
+            'template' => 'services',
+            'template_data' => [
+                'eyebrow' => 'What We Offer',
+                'subtitle' => 'Tailored digital solutions engineered for speed, scale, and reliability.',
+                'category_id' => (string) $enHighlightsCat->id,
+                'tag_id' => '',
+                'sort_order' => 'oldest',
+                'limit' => 6,
+                'cta_heading' => 'Ready to Build Something Great?',
+                'cta_text' => 'Tell us about your project requirements and our team will prepare a tailored plan.',
+                'form_slug' => 'contact-us',
+            ],
+        ]);
+        $enContact->update([
+            'template' => 'contact',
+            'content' => '<p>Have a question or want to start a project? Reach out using our contact details or submit the form.</p>',
+            'template_data' => [
+                'subtitle' => 'We would love to hear from you. Reach out anytime.',
+                'contact_email' => 'hello@orhabyte.com',
+                'contact_phone' => '+1 (555) 123-4567',
+                'contact_address' => 'OrhaByte Software Labs LLP',
+                'form_slug' => 'contact-us',
+            ],
+        ]);
+        $arServices->update([
+            'template' => 'services',
+            'template_data' => [
+                'eyebrow' => 'خدماتنا المميزة',
+                'subtitle' => 'حلول رقمية متكاملة مصممة للأداء العالي وقابلية التوسع.',
+                'category_id' => (string) $arHighlightsCat->id,
+                'tag_id' => '',
+                'sort_order' => 'oldest',
+                'limit' => 6,
+                'cta_heading' => 'جاهز لبدء مشروعك القادم؟',
+                'cta_text' => 'أخبرنا بتفاصيل مشروعك وسيتواصل معك فريقنا.',
+                'form_slug' => 'contact-us',
+            ],
+        ]);
+        $arContact->update([
+            'template' => 'contact',
+            'content' => '<p>يسعدنا تواصلك معنا عبر بيانات التواصل أو النموذج المقابل.</p>',
+            'template_data' => [
+                'subtitle' => 'نحن هنا للإجابة على جميع استفساراتك.',
+                'contact_email' => 'hello@orhabyte.com',
+                'contact_phone' => '+1 (555) 123-4567',
+                'contact_address' => 'OrhaByte Software Labs LLP',
+                'form_slug' => 'contact-us',
+            ],
+        ]);
     }
 }
 

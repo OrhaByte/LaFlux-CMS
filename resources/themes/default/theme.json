@@ -1,8 +1,115 @@
 {
     "name": "LaFlux Default",
     "slug": "default",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "author": "OrhaByte Software Labs LLP",
-    "description": "Modern multi-purpose Blade theme for LaFlux CMS with hero slider, featured services, blog cards, multilingual RTL/LTR support, and dynamic menus."
+    "description": "Modern multi-purpose Blade theme for LaFlux CMS with customizable sections driven by categories, tags, banners, and forms.",
+    "sections": {
+        "hero": {
+            "label": "Hero Slider Section",
+            "description": "Top hero banner displayed at the top of the homepage.",
+            "fields": {
+                "enabled": { "type": "toggle", "label": "Show Hero Section", "default": true },
+                "banner_slug": { "type": "banner", "label": "Select Hero Banner / Slider", "default": "home-hero" },
+                "fallback_title": { "type": "text", "label": "Fallback Heading (if no banner selected)", "default": "LaFlux CMS" },
+                "fallback_subtitle": { "type": "textarea", "label": "Fallback Subtitle", "default": "Build fast, modern, multilingual websites with modular Laravel 13 packages." }
+            }
+        },
+        "highlights": {
+            "label": "Highlights / Features Section",
+            "description": "3-column showcase cards pulled dynamically from Posts in a chosen Category or Tag.",
+            "fields": {
+                "enabled": { "type": "toggle", "label": "Show Highlights Section", "default": true },
+                "eyebrow": { "type": "text", "label": "Eyebrow Badge", "default": "Why LaFlux CMS" },
+                "heading": { "type": "text", "label": "Section Heading", "default": "Everything You Need to Launch Fast" },
+                "subtitle": { "type": "textarea", "label": "Section Subtitle", "default": "A flexible, modular content platform engineered for performance, multilingual publishing, and effortless administration." },
+                "category_id": { "type": "category", "label": "Source Category", "default": "" },
+                "tag_id": { "type": "tag", "label": "Filter by Tag (optional)", "default": "" },
+                "sort_order": { "type": "sort", "label": "Sort Order", "default": "latest" },
+                "limit": { "type": "number", "label": "Number of Items", "default": 3 }
+            }
+        },
+        "latest_posts": {
+            "label": "Latest Articles / Blog Section",
+            "description": "Blog post cards section driven by your chosen Category, Tag, and Sort Order.",
+            "fields": {
+                "enabled": { "type": "toggle", "label": "Show Blog Section", "default": true },
+                "eyebrow": { "type": "text", "label": "Eyebrow Badge", "default": "Latest Articles" },
+                "heading": { "type": "text", "label": "Section Heading", "default": "From Our Blog" },
+                "subtitle": { "type": "textarea", "label": "Section Subtitle", "default": "Insights, product updates, and stories published straight from LaFlux CMS." },
+                "category_id": { "type": "category", "label": "Source Category", "default": "" },
+                "tag_id": { "type": "tag", "label": "Filter by Tag (optional)", "default": "" },
+                "sort_order": { "type": "sort", "label": "Sort Order", "default": "latest" },
+                "limit": { "type": "number", "label": "Number of Posts", "default": 6 }
+            }
+        },
+        "contact_cta": {
+            "label": "Contact / Get In Touch Section",
+            "description": "Bottom call-to-action paired with a configurable CMS Form.",
+            "fields": {
+                "enabled": { "type": "toggle", "label": "Show Contact Section", "default": true },
+                "eyebrow": { "type": "text", "label": "Eyebrow Badge", "default": "Get In Touch" },
+                "heading": { "type": "text", "label": "Section Heading", "default": "Have a Project in Mind?" },
+                "description": { "type": "textarea", "label": "Description", "default": "Send us a message using our dynamic CMS form. Every submission is validated and stored directly in your LaFlux Admin inbox." },
+                "button_text": { "type": "text", "label": "CTA Button Label", "default": "Learn More About Us" },
+                "button_page_slug": { "type": "page", "label": "CTA Target Page", "default": "about-us" },
+                "form_slug": { "type": "form", "label": "Select CMS Form", "default": "contact-us" }
+            }
+        },
+        "branding": {
+            "label": "Branding & Footer",
+            "description": "Theme primary accent color and footer bio text.",
+            "fields": {
+                "primary_color": { "type": "color", "label": "Primary Brand Color", "default": "#2563eb" },
+                "footer_tagline": { "type": "textarea", "label": "Footer Tagline", "default": "Modern modular Laravel 13 CMS with multilingual pages, posts, menus, sliders, media library, and dynamic forms." }
+            }
+        }
+    },
+    "page_templates": {
+        "default": {
+            "label": "Default Page",
+            "description": "Standard editorial page layout with banner header and content card.",
+            "view": "Theme::page",
+            "fields": {}
+        },
+        "services": {
+            "label": "Services Showcase",
+            "description": "Fancy services layout with styled cards pulled from a chosen Category/Tag plus bottom CTA & Form.",
+            "view": "Theme::templates.services",
+            "fields": {
+                "eyebrow": { "type": "text", "label": "Eyebrow Badge", "default": "What We Offer" },
+                "subtitle": { "type": "textarea", "label": "Hero Subtitle", "default": "Tailored digital solutions engineered for speed, scale, and reliability." },
+                "category_id": { "type": "category", "label": "Services Category (Posts Source)", "default": "" },
+                "tag_id": { "type": "tag", "label": "Filter by Tag (optional)", "default": "" },
+                "sort_order": { "type": "sort", "label": "Sort Order", "default": "oldest" },
+                "limit": { "type": "number", "label": "Number of Services", "default": 6 },
+                "cta_heading": { "type": "text", "label": "Bottom CTA Heading", "default": "Ready to Build Something Great?" },
+                "cta_text": { "type": "textarea", "label": "Bottom CTA Description", "default": "Tell us about your project requirements and our team will prepare a tailored plan." },
+                "form_slug": { "type": "form", "label": "Bottom Contact Form", "default": "contact-us" }
+            }
+        },
+        "contact": {
+            "label": "Contact Split Layout",
+            "description": "Two-column contact page with info cards on the left and a dynamic CMS Form on the right.",
+            "view": "Theme::templates.contact",
+            "fields": {
+                "subtitle": { "type": "textarea", "label": "Hero Subtitle", "default": "We would love to hear from you. Reach out anytime." },
+                "contact_email": { "type": "text", "label": "Contact Email", "default": "hello@orhabyte.com" },
+                "contact_phone": { "type": "text", "label": "Contact Phone", "default": "+1 (555) 123-4567" },
+                "contact_address": { "type": "text", "label": "Office Address", "default": "OrhaByte Software Labs LLP" },
+                "form_slug": { "type": "form", "label": "Select Contact Form", "default": "contact-us" }
+            }
+        },
+        "landing": {
+            "label": "Full-Width Landing Page",
+            "description": "Marketing landing layout with optional Hero Banner, full-width content, and featured posts strip.",
+            "view": "Theme::templates.landing",
+            "fields": {
+                "banner_slug": { "type": "banner", "label": "Hero Banner / Slider", "default": "home-hero" },
+                "category_id": { "type": "category", "label": "Featured Posts Category (optional)", "default": "" },
+                "sort_order": { "type": "sort", "label": "Posts Sort Order", "default": "latest" },
+                "limit": { "type": "number", "label": "Number of Posts", "default": 3 }
+            }
+        }
+    }
 }
-

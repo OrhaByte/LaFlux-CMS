@@ -12,7 +12,8 @@ class CmsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/Views', 'Cms');
 
         // Register active front-end Theme view namespace (resources/themes/{active}/views) with fallback to Cms::frontend
-        $themeViews = resource_path('themes/default/views');
+        $activeTheme = \ExtensionsValley\Cms\Helpers\ThemeHelper::activeTheme();
+        $themeViews = resource_path('themes/' . $activeTheme . '/views');
         if (is_dir($themeViews)) {
             $this->loadViewsFrom([$themeViews, __DIR__ . '/Views/frontend'], 'Theme');
         } else {

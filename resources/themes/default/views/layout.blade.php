@@ -14,6 +14,12 @@
         <link rel="shortcut icon" href="{{ asset(\WebConf::get('fav_icon')) }}">
     @endif
     <link rel="stylesheet" href="{{ asset('themes/default/theme.css') }}">
+    @php
+        $brandingCfg = \ExtensionsValley\Cms\Helpers\ThemeHelper::getSection('branding', $currentLang->code ?? null);
+    @endphp
+    @if(!empty($brandingCfg['primary_color']))
+        <style>:root { --lf-primary: {{ $brandingCfg['primary_color'] }}; }</style>
+    @endif
     @stack('styles')
 </head>
 <body>

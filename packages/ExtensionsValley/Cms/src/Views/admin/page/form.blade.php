@@ -61,6 +61,8 @@
                             <textarea name="content" id="content" class="form-control cms-editor" rows="12" {{ $readonly }}>{{ old('content', $page->content ?? '') }}</textarea>
                         </div>
 
+                        @include('Cms::admin.partials.page_template_options')
+
                         <hr/>
                         <h4>SEO Meta</h4>
                         <div class="form-group">
@@ -84,6 +86,20 @@
                             <div class="panel-heading"><strong>Publishing</strong></div>
                             <div class="panel-body">
                                 @include('Cms::admin.partials.language_select', ['currentLanguageCode' => $page->language_code ?? null])
+                                @php
+                                    $availTemplates = \ExtensionsValley\Cms\Helpers\ThemeHelper::getPageTemplates();
+                                    $curTemplate = old('template', $page->template ?? 'default');
+                                @endphp
+                                <div class="form-group">
+                                    <label for="page_template_select">Page Template</label>
+                                    <select name="template" id="page_template_select" class="form-control" onchange="togglePageTemplateOptions()" {{ $disabled }}>
+                                        @foreach($availTemplates as $tKey => $tDef)
+                                            <option value="{{ $tKey }}" {{ $curTemplate === $tKey ? 'selected' : '' }}>
+                                                {{ $tDef['label'] ?? ucfirst($tKey) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label for="status">Status <span class="error_red">*</span></label>
                                     <select name="status" id="status" class="form-control" required {{ $disabled }}>

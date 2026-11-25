@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use ExtensionsValley\Cms\Helpers\ThemeHelper;
 use ExtensionsValley\Cms\Models\Banner;
 use ExtensionsValley\Cms\Models\BannerSlide;
 use ExtensionsValley\Cms\Models\Category;
@@ -14,6 +15,7 @@ use ExtensionsValley\Cms\Models\MenuItem;
 use ExtensionsValley\Cms\Models\Page;
 use ExtensionsValley\Cms\Models\Post;
 use ExtensionsValley\Cms\Models\Tag;
+use ExtensionsValley\Cms\Models\ThemeSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -205,6 +207,78 @@ class CmsTest extends TestCase
         $this->assertCount(2, $versions);
         $this->assertSame(2, $versions->first()->version_number);
         $this->assertSame('<p>First version</p>', $versions->last()->content);
+    }
+
+    public function test_theme_customizer_filters_section_posts_by_category_and_sort_order(): void
+    {
+        $catA = Category::create(['language_code' => 'en', 'name' => 'Cat A', 'slug' => 'cat-a', 'status' => 1]);
+        $catB = Category::create(['language_code' => 'en', 'name' => 'Cat B', 'slug' => 'cat-b', 'status' => 1]);
+
+        Post::create(['language_code' => 'en', 'title' => 'Zebra Post', 'slug' => 'zebra', 'category_id' => $catA->id, 'status' => 1, 'published_at' => now()->subHour()]);
+        Post::create(['language_code' => 'en', 'title' => 'Alpha Post', 'slug' => 'alpha', 'category_id' => $catA->id, 'status' => 1, 'published_at' => now()->subMinute()]);
+        Post::create(['language_code' => 'en', 'title' => 'Other Cat Post', 'slug' => 'other', 'category_id' => $catB->id, 'status' => 1, 'published_at' => now()]);
+
+        ThemeSetting::create([
+            'theme_slug' => 'default',
+            'language_code' => 'en',
+            'section_key' => 'highlights',
+            'settings' => [
+                'enabled' => true,
+                'heading' => 'Custom Highlights Heading',
+                'category_id' => (string) $catA->id,
+                'sort_order' => 'title_asc',
+                'limit' => 2,
+            ],
+        ]);
+
+        $cfg = ThemeHelper::getSection('highlights', 'en', 'default');
+        $posts = ThemeHelper::getSectionPosts($cfg, 'en');
+
+        $this->assertCount(2, $posts);
+        $this->assertSame('Alpha Post', $posts->first()->title);
+        $this->assertSame('Zebra Post', $posts->last()->title);
+
+        $this->get('/')
+            ->assertStatus(200)
+            ->assertSee('Custom Highlights Heading')
+            ->assertSee('Alpha Post');
+    }
+
+    public function test_custom_page_template_renders_with_template_data_and_unknown_falls_back(): void
+    {
+        $cat = Category::create(['language_code' => 'en', 'name' => 'Services', 'slug' => 'services', 'status' => 1]);
+        Post::create([
+            'language_code' => 'en',
+            'title' => 'Cloud Architecture',
+            'slug' => 'cloud-architecture',
+            'excerpt' => 'Scalable cloud engineering',
+            'category_id' => $cat->id,
+            'status' => 1,
+            'published_at' => now()->subMinute(),
+        ]);
+
+        Page::create([
+            'language_code' => 'en',
+            'title' => 'Our Services',
+            'slug' => 'our-services',
+            'template' => 'services',
+            'template_data' => [
+                'eyebrow' => 'Custom Eyebrow',
+                'category_id' => (string) $cat->id,
+                'cta_heading' => 'Let Us Talk',
+            ],
+            'status' => 1,
+            'published_at' => now()->subMinute(),
+        ]);
+
+        $this->get('/page/our-services')
+            ->assertStatus(200)
+            ->assertSee('Custom Eyebrow')
+            ->assertSee('Cloud Architecture')
+            ->assertSee('Let Us Talk');
+
+        // Unknown template should safely fall back to Theme::page
+        $this->assertSame('Theme::page', ThemeHelper::resolvePageTemplateView('non_existent_template'));
     }
 }
 

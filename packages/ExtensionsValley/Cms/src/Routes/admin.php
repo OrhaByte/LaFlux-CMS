@@ -290,5 +290,19 @@ Route::group(['prefix' => 'admin/cms', 'middleware' => ['admin', 'auth:admin']],
         'as' => 'extensionsvalley.cms.viewlanguage',
         'uses' => 'ExtensionsValley\Cms\Controllers\LanguageController@viewLanguage',
     ]);
+
+    // Theme Customizer
+    Route::get('/customizer', [
+        'as' => 'extensionsvalley.cms.customizer',
+        'uses' => 'ExtensionsValley\Cms\Controllers\ThemeCustomizerController@index',
+    ]);
+    Route::post('/customizer/save', [
+        'as' => 'extensionsvalley.cms.customizer.save',
+        'uses' => 'ExtensionsValley\Cms\Controllers\ThemeCustomizerController@save',
+    ]);
+    Route::post('/customizer/reset', [
+        'as' => 'extensionsvalley.cms.customizer.reset',
+        'uses' => 'ExtensionsValley\Cms\Controllers\ThemeCustomizerController@reset',
+    ]);
 });
 

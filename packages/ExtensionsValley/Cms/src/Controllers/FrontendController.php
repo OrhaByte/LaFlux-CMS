@@ -3,6 +3,7 @@
 namespace ExtensionsValley\Cms\Controllers;
 
 use ExtensionsValley\Cms\Helpers\CmsHelper;
+use ExtensionsValley\Cms\Helpers\ThemeHelper;
 use ExtensionsValley\Cms\Models\Category;
 use ExtensionsValley\Cms\Models\CmsForm;
 use ExtensionsValley\Cms\Models\CmsFormSubmission;
@@ -179,8 +180,12 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('Theme::page', array_merge($this->sharedData($lang), [
+        $viewName = ThemeHelper::resolvePageTemplateView($page->template);
+        $templateData = ThemeHelper::getPageTemplateData($page);
+
+        return view($viewName, array_merge($this->sharedData($lang), [
             'page' => $page,
+            'templateData' => $templateData,
             'metaTitle' => $page->meta_title ?: $page->title,
             'metaKeywords' => $page->meta_keywords ?: '',
             'metaDescription' => $page->meta_description ?: '',

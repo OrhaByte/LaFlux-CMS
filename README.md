@@ -18,7 +18,8 @@ A modern, modular, WordPress-inspired **Laravel 13.x Content Management System**
 ## Key Features
 
 ### Content Management (`ExtensionsValley/Cms`)
-- **Posts & Pages:** Full CRUD with **TinyMCE 6 WYSIWYG** editor, live clickable permalinks, **Featured Images** (upload or pick from Media Library), **Scheduled Publishing** (`published_at`), and complete **SEO Meta** fields (Meta Title, Meta Keywords, Meta Description).
+- **Posts & Pages:** Full CRUD with **TinyMCE 6 WYSIWYG** editor, live clickable permalinks, **Content Versioning** (automatic snapshot on each publish with scrollable history, modal preview, and overwrite confirmation), **Theme Page Templates** with per-template dynamic options, **Featured Images** (upload or pick from Media Library), **Scheduled Publishing** (`published_at`), and complete **SEO Meta** fields (Meta Title, Meta Keywords, Meta Description).
+- **Theme Customizer (`theme.json`):** Schema-driven WordPress-style customizer (`CMS → Theme Customizer`) where each theme declares its own editable homepage sections, category/tag post sources, sort order (`latest`, `oldest`, `title_asc`, `title_desc`, `random`), sliders, forms, and brand colors per language.
 - **Categories & Tags:** Nested parent/child categories, post tags (multi-select), and relation-safe trash/unpublish checks.
 - **WordPress-Style Media Library:** Unified uploads under `public/uploads/cms/YYYY/MM/` with drag-and-drop multi-file upload, search & type filters, attachment details modal (title, alt text, one-click URL copy), and a reusable **Media Picker** modal integrated into Featured Images, Banner Slides, and TinyMCE content insertion.
 - **Dynamic Navigation Menus:** Manage `header`, `footer`, and `sidebar` menus linking to Pages, Posts, Categories, or Custom URLs with nested sub-menus and **drag-and-drop reordering**.
@@ -93,6 +94,8 @@ A modern, modular, WordPress-inspired **Laravel 13.x Content Management System**
 ## Front-End Theme, Routes & Shortcodes
 
 The default multi-purpose Blade theme lives in `resources/themes/default/` (with assets in `public/themes/default/`), keeping front-end layouts cleanly separated from core CMS packages.
+
+> **Building Custom Themes & Page Templates:** See the complete [Theme Development Guide](docs/THEME_DEVELOPMENT.md) for `theme.json` schema reference, supported field types, Theme Customizer integration, and creating custom Page Templates (`resources/themes/<theme>/views/templates/`).
 
 | Route (Single Language) | Route (Multilingual) | Description |
 | :--- | :--- | :--- |

@@ -53,6 +53,11 @@ namespace ExtensionsValley\Cms\Events;
                 'menu_text' => 'Languages',
                 'acl_key' => 'extensionsvalley.cms.languages',
             ],
+            '9' => [
+                'link' => url('/') . '/admin/cms/customizer',
+                'menu_text' => 'Theme Customizer',
+                'acl_key' => 'extensionsvalley.cms.customizer',
+            ],
         ],
     ]);
 });

@@ -83,6 +83,7 @@ class CmsSeeder extends Seeder
                 ['menu_text' => 'Banners', 'link' => $baseUrl . '/admin/ExtensionsValley/cms/list/cms_banners', 'acl_key' => 'extensionsvalley.cms.banners', 'ordering' => 7],
                 ['menu_text' => 'Forms', 'link' => $baseUrl . '/admin/ExtensionsValley/cms/list/cms_forms', 'acl_key' => 'extensionsvalley.cms.forms', 'ordering' => 8],
                 ['menu_text' => 'Languages', 'link' => $baseUrl . '/admin/ExtensionsValley/cms/list/cms_languages', 'acl_key' => 'extensionsvalley.cms.languages', 'ordering' => 9],
+                ['menu_text' => 'Theme Customizer', 'link' => $baseUrl . '/admin/cms/customizer', 'acl_key' => 'extensionsvalley.cms.customizer', 'ordering' => 10],
             ];
 
             foreach ($subItems as $item) {
