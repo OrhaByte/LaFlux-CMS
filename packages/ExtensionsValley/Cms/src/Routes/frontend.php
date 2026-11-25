@@ -32,6 +32,10 @@ Route::group(['middleware' => ['web']], function () {
     });
 
     // Unprefixed routes (used directly when single-language; auto-redirect to /{defaultLang}/... when multilingual)
+    Route::get('/', [
+        'as' => 'cms.frontend.root',
+        'uses' => 'ExtensionsValley\Cms\Controllers\FrontendController@root',
+    ]);
     Route::get('/cms', [
         'as' => 'cms.frontend.home',
         'uses' => 'ExtensionsValley\Cms\Controllers\FrontendController@home',

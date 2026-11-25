@@ -47,6 +47,15 @@ class FrontendController extends Controller
 
     // --- Unprefixed entry points ---
 
+    public function root()
+    {
+        if (CmsHelper::isMultilingual()) {
+            return redirect(CmsHelper::url('', CmsHelper::defaultLanguageCode()));
+        }
+
+        return $this->renderHome($this->resolveLanguage());
+    }
+
     public function home()
     {
         if (CmsHelper::isMultilingual()) {
@@ -153,12 +162,12 @@ class FrontendController extends Controller
             ->with(['category', 'tags', 'author'])
             ->orderByDesc('published_at')
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(9);
 
-        return view('Cms::frontend.home', array_merge($this->sharedData($lang), [
+        return view('Theme::home', array_merge($this->sharedData($lang), [
             'posts' => $posts,
             'metaTitle' => 'Home',
-            'metaDescription' => 'Latest articles and updates.',
+            'metaDescription' => \WebConf::get('meta_desc') ?: 'Modern modular Laravel 13 CMS.',
         ]));
     }
 
@@ -170,7 +179,7 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('Cms::frontend.page', array_merge($this->sharedData($lang), [
+        return view('Theme::page', array_merge($this->sharedData($lang), [
             'page' => $page,
             'metaTitle' => $page->meta_title ?: $page->title,
             'metaKeywords' => $page->meta_keywords ?: '',
@@ -186,7 +195,7 @@ class FrontendController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return view('Cms::frontend.post', array_merge($this->sharedData($lang), [
+        return view('Theme::post', array_merge($this->sharedData($lang), [
             'post' => $post,
             'metaTitle' => $post->meta_title ?: $post->title,
             'metaKeywords' => $post->meta_keywords ?: '',
@@ -209,7 +218,7 @@ class FrontendController extends Controller
             ->orderByDesc('id')
             ->paginate(10);
 
-        return view('Cms::frontend.category', array_merge($this->sharedData($lang), [
+        return view('Theme::category', array_merge($this->sharedData($lang), [
             'category' => $category,
             'posts' => $posts,
             'metaTitle' => $category->meta_title ?: $category->name,
@@ -233,7 +242,7 @@ class FrontendController extends Controller
             ->orderByDesc('id')
             ->paginate(10);
 
-        return view('Cms::frontend.tag', array_merge($this->sharedData($lang), [
+        return view('Theme::tag', array_merge($this->sharedData($lang), [
             'tag' => $tag,
             'posts' => $posts,
             'metaTitle' => 'Tag: ' . $tag->name,

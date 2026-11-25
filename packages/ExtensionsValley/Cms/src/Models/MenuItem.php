@@ -59,6 +59,10 @@ class MenuItem extends Model
             return \ExtensionsValley\Cms\Helpers\CmsHelper::url(ltrim($this->url, '/'));
         }
 
+        if ($this->url && str_starts_with($this->url, '/') && !str_starts_with($this->url, '//')) {
+            return url($this->url);
+        }
+
         return $this->url ?: '#';
     }
 }

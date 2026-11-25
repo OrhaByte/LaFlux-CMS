@@ -78,7 +78,6 @@
                         </ul>
                     </li>
                 @endif
-                <li><a href="{{ url('/admin') }}">Admin</a></li>
             </ul>
         </nav>
     </div>

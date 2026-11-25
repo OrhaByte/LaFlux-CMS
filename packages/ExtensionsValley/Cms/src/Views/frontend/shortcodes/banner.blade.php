@@ -15,7 +15,12 @@
                             <p style="margin:0 0 14px 0; color:#e2e8f0; font-size:1rem;">{{ $slide->description }}</p>
                         @endif
                         @if($slide->button_link)
-                            <a href="{{ $slide->button_link }}" style="display:inline-block; background:#2563eb; color:#fff; padding:9px 18px; border-radius:6px; font-weight:600; text-decoration:none;">
+                            @php
+                                $btnHref = (str_starts_with($slide->button_link, '/') && !str_starts_with($slide->button_link, '//'))
+                                    ? url($slide->button_link)
+                                    : $slide->button_link;
+                            @endphp
+                            <a href="{{ $btnHref }}" style="display:inline-block; background:#2563eb; color:#fff; padding:9px 18px; border-radius:6px; font-weight:600; text-decoration:none;">
                                 {{ $slide->button_text ?: 'Read More' }} &rarr;
                             </a>
                         @endif

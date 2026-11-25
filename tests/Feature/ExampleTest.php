@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * A basic test example.
      *
@@ -16,7 +18,7 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        // The root URL redirects to the admin panel.
-        $response->assertRedirect('/admin/');
+        // The root URL renders the front-end CMS theme homepage.
+        $response->assertStatus(200);
     }
 }

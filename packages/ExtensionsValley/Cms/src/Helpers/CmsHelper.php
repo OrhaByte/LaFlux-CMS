@@ -90,17 +90,17 @@ class CmsHelper
      * - Single active language: /cms, /page/about-us, /post/hello
      * - Multiple active languages: /en/cms, /ar/page/about-us, /es/post/hello
      */
-    public static function url(string $path, ?string $lang = null): string
+    public static function url(string $path = '', ?string $lang = null): string
     {
         $cleanPath = ltrim($path, '/');
 
         if (!self::isMultilingual()) {
-            return url('/' . $cleanPath);
+            return $cleanPath === '' ? url('/') : url('/' . $cleanPath);
         }
 
         $code = strtolower($lang ?: self::currentLanguageCode());
 
-        return url('/' . $code . '/' . $cleanPath);
+        return $cleanPath === '' ? url('/' . $code) : url('/' . $code . '/' . $cleanPath);
     }
 
     public static function storeMediaFile(UploadedFile $file, ?int $userId = null): Media

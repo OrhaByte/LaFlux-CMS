@@ -10,7 +10,22 @@ class CmsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__ . '/Views', 'Cms');
+
+        // Register active front-end Theme view namespace (resources/themes/{active}/views) with fallback to Cms::frontend
+        $themeViews = resource_path('themes/default/views');
+        if (is_dir($themeViews)) {
+            $this->loadViewsFrom([$themeViews, __DIR__ . '/Views/frontend'], 'Theme');
+        } else {
+            $this->loadViewsFrom(__DIR__ . '/Views/frontend', 'Theme');
+        }
+
         $this->loadMigrationsFrom(__DIR__ . '/Database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \ExtensionsValley\Cms\Console\ImportDemoCommand::class,
+            ]);
+        }
 
         Blade::directive('shortcode', function ($expression) {
             return "<?php echo \\ExtensionsValley\\Cms\\Helpers\\ShortcodeHelper::render({$expression}); ?>";

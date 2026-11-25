@@ -11,9 +11,6 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', ['as' => 'login', 'uses' => function () {
     return redirect('/admin/');
-});
-Route::get('/login',[ 'as' => 'login', 'uses' =>  function () {
-   return redirect('/admin/');
 }]);

@@ -66,7 +66,13 @@ A modern, modular, WordPress-inspired **Laravel 13.x Content Management System**
    composer dump-autoload -o
    ```
 
-5. **Set folder permissions:**
+5. **(Optional) One-Click Demo Content Import:**
+   Populate the site immediately with multilingual demo data (English LTR + Arabic RTL languages, 3-slide Hero Banner, About/Services/Contact pages, 6 sample posts with categories & tags, Header/Footer menus, and a Contact Us form):
+   ```bash
+   php artisan laflux:import-demo
+   ```
+
+6. **Set folder permissions:**
    Ensure your web server user has write permissions on the storage, cache, and upload directories:
    ```bash
    chmod -R 775 storage bootstrap/cache public/uploads/cms public/packages/extensionsvalley/dashboard/images
@@ -84,10 +90,13 @@ A modern, modular, WordPress-inspired **Laravel 13.x Content Management System**
 
 ---
 
-## Front-End Routes & Shortcodes
+## Front-End Theme, Routes & Shortcodes
+
+The default multi-purpose Blade theme lives in `resources/themes/default/` (with assets in `public/themes/default/`), keeping front-end layouts cleanly separated from core CMS packages.
 
 | Route (Single Language) | Route (Multilingual) | Description |
 | :--- | :--- | :--- |
+| `/` | `/{lang}` | Main Front-End Homepage (Hero Slider, Highlights, Latest Posts, Contact Form) |
 | `/cms` | `/{lang}/cms` | Blog Home & Latest Posts |
 | `/page/{slug}` | `/{lang}/page/{slug}` | Single CMS Page |
 | `/post/{slug}` | `/{lang}/post/{slug}` | Single Blog Post |
@@ -96,7 +105,7 @@ A modern, modular, WordPress-inspired **Laravel 13.x Content Management System**
 
 **Shortcode Examples (Pages, Posts, or Blade via `@shortcode(...)`):**
 ```text
-[banner slug="home-banner"]
+[banner slug="home-hero"]
 [form slug="contact-us"]
 ```
 
