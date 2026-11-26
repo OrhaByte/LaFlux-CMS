@@ -130,7 +130,7 @@ class BannerController extends Controller
             ])->withErrors($validation)->withInput();
         }
 
-        $imagePath = $request->input('selected_media_path');
+        $imagePath = CmsHelper::sanitizeMediaPath($request->input('selected_media_path'));
         if ($request->hasFile('slide_image')) {
             $imagePath = CmsHelper::storeMediaFile($request->file('slide_image'))->file_path;
         }
@@ -175,6 +175,10 @@ class BannerController extends Controller
 
     public function reorderSlides(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.banners', 'edit')) {
+            return response()->json(['status' => 'forbidden'], 403);
+        }
+
         $order = $request->input('order', []);
         if (!is_array($order) || empty($order)) {
             return response()->json(['status' => 'error'], 422);

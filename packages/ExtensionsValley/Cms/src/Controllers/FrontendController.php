@@ -12,6 +12,7 @@ use ExtensionsValley\Cms\Models\Post;
 use ExtensionsValley\Cms\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
@@ -288,6 +289,35 @@ class FrontendController extends Controller
             return redirect()->back()
                 ->withErrors($validator, 'cms_form_' . $form->slug)
                 ->withInput();
+        }
+
+        // Verify Google reCAPTCHA v2 if keys are configured in General Settings
+        $recaptchaSiteKey = trim((string) \WebConf::get('recaptcha_site_key'));
+        $recaptchaSecretKey = trim((string) \WebConf::get('recaptcha_secret_key'));
+        if ($recaptchaSiteKey !== '' && $recaptchaSecretKey !== '') {
+            $token = (string) $request->input('g-recaptcha-response', '');
+            if ($token === '') {
+                return redirect()->back()
+                    ->withErrors(['captcha' => 'Please complete the reCAPTCHA verification.'], 'cms_form_' . $form->slug)
+                    ->withInput();
+            }
+
+            try {
+                $verifyResponse = Http::asForm()->timeout(8)->post('https://www.google.com/recaptcha/api/siteverify', [
+                    'secret' => $recaptchaSecretKey,
+                    'response' => $token,
+                    'remoteip' => $request->ip(),
+                ]);
+                $verified = (bool) data_get($verifyResponse->json(), 'success', false);
+            } catch (\Throwable $e) {
+                $verified = false;
+            }
+
+            if (!$verified) {
+                return redirect()->back()
+                    ->withErrors(['captcha' => 'reCAPTCHA verification failed. Please try again.'], 'cms_form_' . $form->slug)
+                    ->withInput();
+            }
         }
 
         CmsFormSubmission::create([

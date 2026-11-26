@@ -66,6 +66,19 @@
             </div>
         @endforeach
 
+        @php
+            $recaptchaSiteKey = trim((string) \WebConf::get('recaptcha_site_key'));
+            $recaptchaSecretKey = trim((string) \WebConf::get('recaptcha_secret_key'));
+        @endphp
+        @if($recaptchaSiteKey !== '' && $recaptchaSecretKey !== '')
+            <div style="margin-bottom:14px;">
+                <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
+            </div>
+            @once
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+            @endonce
+        @endif
+
         <button type="submit" style="background:#2563eb; color:#fff; border:0; padding:10px 22px; border-radius:6px; font-weight:600; cursor:pointer;">
             {{ $form->submit_label ?: 'Submit' }}
         </button>

@@ -35,8 +35,8 @@
                         </li>
                     </ul>
                 </li>
-                @include('Dashboard::dashboard.partials.topnavbuilder')
-                 <li><a href="{{url('/')}}" target="_blank"><b>Visit Front Page</b></a>
+                
+                 <li><a href="{{url('/')}}" target="_blank"><b>View Live Site</b></a>
                  </li>
             </ul>
         </nav>

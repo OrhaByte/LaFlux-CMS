@@ -51,7 +51,7 @@ class PostController extends Controller
             $lang
         );
 
-        $featuredImage = $request->input('selected_media_path') ?: null;
+        $featuredImage = CmsHelper::sanitizeMediaPath($request->input('selected_media_path'));
         if ($request->hasFile('featured_image')) {
             $featuredImage = CmsHelper::uploadFeaturedImage($request->file('featured_image'), 'posts');
         }
@@ -129,7 +129,10 @@ class PostController extends Controller
             $featuredImage = null;
         }
         if ($request->filled('selected_media_path')) {
-            $featuredImage = $request->input('selected_media_path');
+            $sanitized = CmsHelper::sanitizeMediaPath($request->input('selected_media_path'));
+            if ($sanitized !== null) {
+                $featuredImage = $sanitized;
+            }
         }
         if ($request->hasFile('featured_image')) {
             $featuredImage = CmsHelper::uploadFeaturedImage($request->file('featured_image'), 'posts');

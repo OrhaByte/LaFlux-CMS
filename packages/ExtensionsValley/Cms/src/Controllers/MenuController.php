@@ -189,6 +189,10 @@ class MenuController extends Controller
 
     public function reorderMenuItems(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.menus', 'edit')) {
+            return response()->json(['status' => 'forbidden'], 403);
+        }
+
         $order = $request->input('order', []);
         if (!is_array($order) || empty($order)) {
             return response()->json(['status' => 'error', 'message' => 'No items to reorder'], 422);

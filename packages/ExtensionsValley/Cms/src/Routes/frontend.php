@@ -58,6 +58,7 @@ Route::group(['middleware' => ['web']], function () {
     ]);
 
     Route::post('/cms/form/{slug}/submit', [
+        'middleware' => 'throttle:10,1',
         'as' => 'cms.frontend.form.submit',
         'uses' => 'ExtensionsValley\Cms\Controllers\FrontendController@submitForm',
     ]);

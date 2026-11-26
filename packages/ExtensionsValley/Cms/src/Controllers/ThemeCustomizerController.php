@@ -28,6 +28,10 @@ class ThemeCustomizerController extends Controller
 
     public function index(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.customizer', 'view')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $title = 'Theme Customizer';
         $themes = ThemeHelper::availableThemes();
         $activeTheme = ThemeHelper::activeTheme();
@@ -94,6 +98,10 @@ class ThemeCustomizerController extends Controller
 
     public function save(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.customizer', 'edit')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $themeSlug = (string) $request->input('theme_slug', ThemeHelper::activeTheme());
         $lang = strtolower((string) $request->input('language_code', CmsHelper::defaultLanguageCode()));
         $schema = ThemeHelper::getSchema($themeSlug);
@@ -139,6 +147,10 @@ class ThemeCustomizerController extends Controller
 
     public function reset(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.customizer', 'edit')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $themeSlug = (string) $request->input('theme_slug', ThemeHelper::activeTheme());
         $lang = strtolower((string) $request->input('language_code', CmsHelper::defaultLanguageCode()));
 

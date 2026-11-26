@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use ExtensionsValley\Cms\Helpers\CmsHelper;
 use ExtensionsValley\Cms\Helpers\ThemeHelper;
 use ExtensionsValley\Cms\Models\Banner;
 use ExtensionsValley\Cms\Models\BannerSlide;
@@ -279,6 +280,58 @@ class CmsTest extends TestCase
 
         // Unknown template should safely fall back to Theme::page
         $this->assertSame('Theme::page', ThemeHelper::resolvePageTemplateView('non_existent_template'));
+    }
+
+    public function test_security_helpers_block_path_traversal_and_javascript_urls(): void
+    {
+        $this->assertNull(CmsHelper::sanitizeMediaPath('../../.env'));
+        $this->assertNull(CmsHelper::sanitizeMediaPath('/etc/passwd'));
+        $this->assertSame('uploads/cms/2026/11/photo.jpg', CmsHelper::sanitizeMediaPath('uploads/cms/2026/11/photo.jpg'));
+        $this->assertSame('themes/default/images/hero-1.svg', CmsHelper::sanitizeMediaPath('themes/default/images/hero-1.svg'));
+
+        $this->assertSame('#', CmsHelper::sanitizeUrl('javascript:alert(1)'));
+        $this->assertSame('#', CmsHelper::sanitizeUrl('DATA:text/html,<script>alert(1)</script>'));
+        $this->assertSame('https://example.com/page', CmsHelper::sanitizeUrl('https://example.com/page'));
+    }
+
+    public function test_form_submission_enforces_recaptcha_when_keys_are_configured(): void
+    {
+        \Illuminate\Support\Facades\Cache::forever('recaptcha_site_key', 'test-site-key');
+        \Illuminate\Support\Facades\Cache::forever('recaptcha_secret_key', 'test-secret-key');
+
+        $form = CmsForm::create([
+            'name' => 'Protected Form',
+            'slug' => 'protected-form',
+            'submit_label' => 'Send',
+            'success_message' => 'OK',
+            'status' => 1,
+        ]);
+        CmsFormField::create([
+            'form_id' => $form->id,
+            'label' => 'Name',
+            'field_name' => 'name',
+            'field_type' => 'text',
+            'is_required' => true,
+            'ordering' => 1,
+        ]);
+
+        // Missing reCAPTCHA token should be rejected
+        $this->post('/cms/form/protected-form/submit', ['name' => 'Alice'])
+            ->assertRedirect()
+            ->assertSessionHasErrors(['captcha'], null, 'cms_form_protected-form');
+
+        // Valid Google siteverify response should succeed
+        \Illuminate\Support\Facades\Http::fake([
+            'https://www.google.com/recaptcha/api/siteverify' => \Illuminate\Support\Facades\Http::response(['success' => true], 200),
+        ]);
+
+        $this->post('/cms/form/protected-form/submit', [
+            'name' => 'Alice',
+            'g-recaptcha-response' => 'valid-token',
+        ])->assertRedirect()->assertSessionHas('cms_form_success_protected-form', 'OK');
+
+        \Illuminate\Support\Facades\Cache::forget('recaptcha_site_key');
+        \Illuminate\Support\Facades\Cache::forget('recaptcha_secret_key');
     }
 }
 

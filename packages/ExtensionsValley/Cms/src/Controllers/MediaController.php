@@ -22,6 +22,10 @@ class MediaController extends Controller
 
     public function index(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.media', 'view')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $title = 'Media Library';
         $search = trim((string) $request->get('q', ''));
         $type = (string) $request->get('type', 'all');
@@ -49,9 +53,14 @@ class MediaController extends Controller
 
     public function upload(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.media', 'adding')) {
+            abort(403, 'Access Permission Denied');
+        }
+
         $validation = Validator::make($request->all(), [
             'files' => 'required|array|min:1',
-            'files.*' => 'required|file|mimes:jpeg,jpg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip,mp4,mp3|max:10240',
+            // Note: SVG excluded to prevent stored XSS when served directly from public/
+            'files.*' => 'required|file|mimes:jpeg,jpg,png,gif,webp,pdf,doc,docx,xls,xlsx,zip,mp4,mp3|max:10240',
         ]);
 
         if ($validation->fails()) {
@@ -92,6 +101,10 @@ class MediaController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.media', 'edit')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $media = Media::findOrFail($id);
         $media->update([
             'title' => $request->input('title', $media->title),
@@ -104,9 +117,16 @@ class MediaController extends Controller
 
     public function destroy($id)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.media', 'trash')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $media = Media::findOrFail($id);
-        $fullPath = public_path($media->file_path);
-        if (is_file($fullPath)) {
+        $uploadsRoot = realpath(public_path(CmsHelper::UPLOAD_BASE));
+        $fullPath = realpath(public_path($media->file_path));
+
+        // Only delete files verified to be inside public/uploads/cms
+        if ($uploadsRoot && $fullPath && str_starts_with($fullPath, $uploadsRoot . DIRECTORY_SEPARATOR) && is_file($fullPath)) {
             @unlink($fullPath);
         }
         $media->forceDelete();

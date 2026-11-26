@@ -16,9 +16,10 @@
                         @endif
                         @if($slide->button_link)
                             @php
-                                $btnHref = (str_starts_with($slide->button_link, '/') && !str_starts_with($slide->button_link, '//'))
-                                    ? url($slide->button_link)
-                                    : $slide->button_link;
+                                $cleanBtnLink = \ExtensionsValley\Cms\Helpers\CmsHelper::sanitizeUrl($slide->button_link);
+                                $btnHref = (str_starts_with($cleanBtnLink, '/') && !str_starts_with($cleanBtnLink, '//'))
+                                    ? url($cleanBtnLink)
+                                    : $cleanBtnLink;
                             @endphp
                             <a href="{{ $btnHref }}" style="display:inline-block; background:#2563eb; color:#fff; padding:9px 18px; border-radius:6px; font-weight:600; text-decoration:none;">
                                 {{ $slide->button_text ?: 'Read More' }} &rarr;

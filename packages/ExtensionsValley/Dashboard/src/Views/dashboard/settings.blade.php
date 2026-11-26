@@ -109,7 +109,23 @@
                                     <span class="error_red"> {{ $errors->first('meta_keywords') }}</span>
                                 </div>
                             </div>
+                        </div>
 
+                        <hr/>
+                        <h4><i class="fa fa-shield"></i> Google reCAPTCHA v2 <small class="text-muted">(Automatically protects all CMS forms when configured)</small></h4>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="recaptcha_site_key">reCAPTCHA Site Key</label>
+                                    <input type="text" name="settings[recaptcha_site_key]" id="recaptcha_site_key" value="{{ old('settings.recaptcha_site_key', \WebConf::get('recaptcha_site_key')) }}" class="form-control" placeholder="6Lc...">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="recaptcha_secret_key">reCAPTCHA Secret Key</label>
+                                    <input type="password" name="settings[recaptcha_secret_key]" id="recaptcha_secret_key" value="{{ old('settings.recaptcha_secret_key', \WebConf::get('recaptcha_secret_key')) }}" class="form-control" placeholder="6Lc..." autocomplete="new-password">
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">

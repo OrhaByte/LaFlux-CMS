@@ -5,7 +5,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Sign In' }} | LaFlux CMS</title>
+    @php
+        $siteName = \WebConf::get('site_name') ?: 'LaFlux';
+        $copyRight = \WebConf::get('copy_right') ?: $siteName;
+    @endphp
+    <title>{{ $title ?? 'Sign In' }} | {{ $siteName }}</title>
     @if(\WebConf::get('fav_icon') != "")
         <link rel="shortcut icon" href="{{ URL::to('/') }}/{{ \WebConf::get('fav_icon') }}"/>
     @endif
@@ -253,7 +257,7 @@
                     @endif
                 </div>
                 <div>
-                    <div class="brand-name">LaFlux</div>
+                    <div class="brand-name">{{ $siteName }}</div>
                     <div class="brand-sub">Content Management System</div>
                 </div>
             </div>
@@ -265,12 +269,13 @@
                     <li><i class="fa fa-check-circle"></i> Posts, Pages, Categories &amp; Tags</li>
                     <li><i class="fa fa-check-circle"></i> Dynamic Menus &amp; Scheduled Publishing</li>
                     <li><i class="fa fa-check-circle"></i> Built-in SEO Meta &amp; Access Control</li>
+                    <li><i class="fa fa-check-circle"></i> Built-in forms &amp; Google Recaptcha Integration</li>
                 </ul>
             </div>
         </div>
 
         <div class="brand-footer">
-            <div><strong>LaFlux</strong> &mdash; Powered By <strong>OrhaByte Software Labs LLP</strong></div>
+            <div><strong>{{ $siteName }}</strong> &mdash; {{ $copyRight }}</div>
         </div>
     </div>
 
@@ -329,7 +334,7 @@
         </form>
 
         <div class="powered-mobile">
-            &copy; {{ date('Y') }} <strong>LaFlux</strong> &middot; Powered By <strong>OrhaByte Software Labs LLP</strong>
+            &copy; {{ date('Y') }} <strong>{{ $siteName }}</strong> &middot; {{ $copyRight }}
         </div>
     </div>
 </div>

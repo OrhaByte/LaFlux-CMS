@@ -63,7 +63,7 @@ class MenuItem extends Model
             return url($this->url);
         }
 
-        return $this->url ?: '#';
+        return \ExtensionsValley\Cms\Helpers\CmsHelper::sanitizeUrl($this->url);
     }
 }
 

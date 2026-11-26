@@ -139,6 +139,60 @@ class CmsHelper
         return self::storeMediaFile($file)->file_path;
     }
 
+    public static function sanitizeMediaPath(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        $clean = ltrim(str_replace('\\', '/', trim($path)), '/');
+        if (str_contains($clean, '..')) {
+            return null;
+        }
+
+        if (str_starts_with($clean, self::UPLOAD_BASE . '/') || str_starts_with($clean, 'themes/')) {
+            return $clean;
+        }
+
+        return null;
+    }
+
+    public static function sanitizeUrl(?string $url): string
+    {
+        $trimmed = trim((string) $url);
+        if ($trimmed === '') {
+            return '#';
+        }
+
+        if (preg_match('/^\s*(javascript|data|vbscript):/i', $trimmed)) {
+            return '#';
+        }
+
+        return $trimmed;
+    }
+
+    public static function hasAcl(string $aclKey, string $action = 'view'): bool
+    {
+        $user = Auth::guard('admin')->user();
+        if (!$user) {
+            return false;
+        }
+        if ((int) $user->groups === 1) {
+            return true;
+        }
+        if (!Schema::hasTable('acl_permission')) {
+            return true;
+        }
+
+        $col = in_array($action, ['view', 'adding', 'edit', 'trash'], true) ? $action : 'view';
+
+        return DB::table('acl_permission')
+            ->where('group_id', $user->groups)
+            ->where('acl_key', $aclKey)
+            ->where($col, 1)
+            ->exists();
+    }
+
     public static function getMenuByLocation(string $location, ?string $lang = null): ?Menu
     {
         $code = strtolower($lang ?: self::currentLanguageCode());

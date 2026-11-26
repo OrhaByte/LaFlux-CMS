@@ -181,6 +181,10 @@ class FormController extends Controller
 
     public function reorderFields(Request $request)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.forms', 'edit')) {
+            return response()->json(['status' => 'forbidden'], 403);
+        }
+
         $order = $request->input('order', []);
         if (!is_array($order) || empty($order)) {
             return response()->json(['status' => 'error'], 422);
@@ -195,6 +199,10 @@ class FormController extends Controller
 
     public function submissions($id)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.forms', 'view')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $form = CmsForm::with('fields')->findOrFail($id);
         $submissions = $form->submissions()->paginate(20);
         $title = 'Form Submissions: ' . $form->name;
@@ -204,6 +212,10 @@ class FormController extends Controller
 
     public function deleteSubmission($id)
     {
+        if (!CmsHelper::hasAcl('extensionsvalley.cms.forms', 'trash')) {
+            return redirect()->route('extensionsvalley.admin.dashboard')->with(['error' => 'Access Permission Denied!']);
+        }
+
         $sub = CmsFormSubmission::findOrFail($id);
         $formId = $sub->form_id;
         $sub->delete();

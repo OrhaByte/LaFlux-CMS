@@ -67,7 +67,7 @@ Route::group(['prefix' => 'admin', 'before' => ['admin', 'csrf']], function () {
 
     Route::group(['middleware' => ['admin']], function () {
         Route::post('/authendicate', [
-            'before' => 'throttle:3,60',
+            'middleware' => 'throttle:10,1',
             'name' => 'Authendication',
             'as' => 'extensionsvalley.admin.auth',
             'uses' => 'ExtensionsValley\Dashboard\Controllers\LoginController@getAutendicate',
