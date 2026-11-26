@@ -13,6 +13,8 @@ use ExtensionsValley\Cms\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class FrontendController extends Controller
@@ -320,12 +322,38 @@ class FrontendController extends Controller
             }
         }
 
-        CmsFormSubmission::create([
+        $submission = CmsFormSubmission::create([
             'form_id' => $form->id,
             'payload' => $payload,
             'ip_address' => $request->ip(),
             'user_agent' => substr((string) $request->userAgent(), 0, 500),
         ]);
+
+        // Send SMTP notification email to all configured comma-separated recipients
+        if (!empty($form->notify_email)) {
+            $recipients = array_values(array_filter(
+                array_map('trim', explode(',', (string) $form->notify_email)),
+                fn ($addr) => filter_var($addr, FILTER_VALIDATE_EMAIL) !== false
+            ));
+
+            if (!empty($recipients)) {
+                try {
+                    Mail::send('Cms::emails.form-submission', [
+                        'form' => $form,
+                        'payload' => $payload,
+                        'ipAddress' => $submission->ip_address,
+                    ], function ($message) use ($recipients, $form) {
+                        $message->to($recipients)
+                            ->subject('New Form Submission: ' . $form->name);
+                    });
+                } catch (\Throwable $e) {
+                    Log::error('CMS form notification email failed: ' . $e->getMessage(), [
+                        'form_id' => $form->id,
+                        'recipients' => $recipients,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->back()
             ->with('cms_form_success_' . $form->slug, $form->success_message ?: 'Thank you! Your submission has been received.');

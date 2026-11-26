@@ -84,7 +84,7 @@
                                             $label = $fieldDef['label'] ?? ucfirst($fieldKey);
                                             $val = $vals[$fieldKey] ?? ($fieldDef['default'] ?? '');
                                             $inputName = "sections[{$sectionKey}][{$fieldKey}]";
-                                            $colClass = in_array($type, ['textarea', 'toggle'], true) ? 'col-md-12' : 'col-md-6';
+                                            $colClass = in_array($type, ['textarea', 'richtext', 'toggle'], true) ? 'col-md-12' : 'col-md-6';
                                         @endphp
                                         <div class="{{ $colClass }}">
                                             @if($type === 'toggle')
@@ -93,6 +93,11 @@
                                                         <input type="checkbox" name="{{ $inputName }}" value="1" {{ !empty($val) ? 'checked' : '' }}>
                                                         <strong>{{ $label }}</strong>
                                                     </label>
+                                                </div>
+                                            @elseif($type === 'richtext')
+                                                <div class="form-group">
+                                                    <label>{{ $label }}</label>
+                                                    <textarea name="{{ $inputName }}" rows="6" class="form-control cms-editor">{{ $val }}</textarea>
                                                 </div>
                                             @elseif($type === 'textarea')
                                                 <div class="form-group">
@@ -161,7 +166,7 @@
                                             @elseif($type === 'number')
                                                 <div class="form-group">
                                                     <label>{{ $label }}</label>
-                                                    <input type="number" name="{{ $inputName }}" min="1" max="30" class="form-control" value="{{ $val }}">
+                                                    <input type="number" name="{{ $inputName }}" min="1" max="3650" class="form-control" value="{{ $val }}">
                                                 </div>
                                             @elseif($type === 'color')
                                                 <div class="form-group">
@@ -203,5 +208,6 @@
             <input type="hidden" name="language_code" value="{{ $selectedLang }}">
         </form>
     </div>
+    @include('Cms::admin.partials.tinymce')
 @stop
 

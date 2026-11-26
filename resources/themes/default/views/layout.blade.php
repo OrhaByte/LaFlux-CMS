@@ -32,6 +32,7 @@
     </main>
 
     @include('Theme::partials.footer')
+    @include('Theme::partials.cookie-banner')
 
     @stack('scripts')
 </body>

@@ -111,7 +111,8 @@ Both `sections` (Theme Customizer) and `page_templates` (Page Editor) support th
 | `toggle` | Checkbox (Show / Hide) | `true` / `false` |
 | `text` | Single-line text input | `string` |
 | `textarea` | Multi-line textarea | `string` |
-| `number` | Numeric input (`1`–`30`) | `int` |
+| `richtext` | TinyMCE 6 WYSIWYG editor *(Theme Customizer)* | HTML `string` |
+| `number` | Numeric input (`1`–`3650`) | `int` |
 | `color` | HTML5 color picker | Hex color (e.g. `#2563eb`) |
 | `category` | Dropdown of published CMS Categories | Category `id` (or `""` for all) |
 | `tag` | Dropdown of published CMS Tags | Tag `id` (or `""` for any) |

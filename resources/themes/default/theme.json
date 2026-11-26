@@ -63,6 +63,19 @@
                 "primary_color": { "type": "color", "label": "Primary Brand Color", "default": "#2563eb" },
                 "footer_tagline": { "type": "textarea", "label": "Footer Tagline", "default": "Modern modular Laravel 13 CMS with multilingual pages, posts, menus, sliders, media library, and dynamic forms." }
             }
+        },
+        "cookie_policy": {
+            "label": "GDPR & Cookie Policy Banner",
+            "description": "Bottom slide-up cookie consent bar with Accept & Reject buttons configured per language.",
+            "fields": {
+                "enabled": { "type": "toggle", "label": "Enable Cookie Consent Banner", "default": true },
+                "title": { "type": "text", "label": "Banner Title", "default": "We Value Your Privacy" },
+                "content": { "type": "richtext", "label": "Cookie & GDPR Notice Content", "default": "<p>We use cookies to enhance your browsing experience, analyze site traffic, and serve personalized content in compliance with GDPR. Click <strong>Accept All</strong> to consent or <strong>Reject</strong> to decline non-essential cookies.</p>" },
+                "policy_page_slug": { "type": "page", "label": "Privacy / Cookie Policy Page (optional link)", "default": "about-us" },
+                "accept_label": { "type": "text", "label": "Accept Button Label", "default": "Accept All" },
+                "reject_label": { "type": "text", "label": "Reject Button Label", "default": "Reject" },
+                "cookie_days": { "type": "number", "label": "Remember Choice (Days)", "default": 365 }
+            }
         }
     },
     "page_templates": {

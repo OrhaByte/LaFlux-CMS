@@ -403,6 +403,15 @@ class ThemeDemoSeeder extends Seeder
             'latest_posts' => ['enabled' => true, 'eyebrow' => 'Latest Articles', 'heading' => 'From Our Blog', 'subtitle' => 'Insights, product updates, and stories published straight from LaFlux CMS.', 'category_id' => (string) $enTech->id, 'tag_id' => '', 'sort_order' => 'latest', 'limit' => 6],
             'contact_cta' => ['enabled' => true, 'eyebrow' => 'Get In Touch', 'heading' => 'Have a Project in Mind?', 'description' => 'Send us a message using our dynamic CMS form. Every submission is validated and stored in your LaFlux Admin inbox.', 'button_text' => 'Learn More About Us', 'button_page_slug' => 'about-us', 'form_slug' => 'contact-us'],
             'branding' => ['primary_color' => '#2563eb', 'footer_tagline' => 'Modern modular Laravel 13 CMS with multilingual pages, posts, menus, sliders, media library, and dynamic forms.'],
+            'cookie_policy' => [
+                'enabled' => true,
+                'title' => 'We Value Your Privacy',
+                'content' => '<p>We use cookies to enhance your browsing experience, analyze site traffic, and comply with GDPR. Click <strong>Accept All</strong> to consent or <strong>Reject</strong> to decline non-essential cookies.</p>',
+                'policy_page_slug' => 'about-us',
+                'accept_label' => 'Accept All',
+                'reject_label' => 'Reject',
+                'cookie_days' => 365,
+            ],
         ];
         foreach ($enCustomizer as $secKey => $secVals) {
             ThemeSetting::updateOrCreate(
@@ -418,6 +427,15 @@ class ThemeDemoSeeder extends Seeder
             'latest_posts' => ['enabled' => true, 'eyebrow' => 'أحدث المقالات', 'heading' => 'من المدونة', 'subtitle' => 'مقالات وأخبار وتحديثات مباشرة من لوحة التحكم.', 'category_id' => (string) $arTech->id, 'tag_id' => '', 'sort_order' => 'latest', 'limit' => 6],
             'contact_cta' => ['enabled' => true, 'eyebrow' => 'تواصل معنا', 'heading' => 'هل لديك مشروع في بالك؟', 'description' => 'أرسل لنا رسالتك عبر النموذج التالي وسيتواصل معك فريقنا في أقرب وقت.', 'button_text' => 'تعرف علينا أكثر', 'button_page_slug' => 'about-us', 'form_slug' => 'contact-us'],
             'branding' => ['primary_color' => '#2563eb', 'footer_tagline' => 'نظام إدارة محتوى حديث مبني على لارافيل 13 مع دعم كامل لتعدد اللغات و RTL.'],
+            'cookie_policy' => [
+                'enabled' => true,
+                'title' => 'نحن نحترم خصوصيتك',
+                'content' => '<p>نستخدم ملفات تعريف الارتباط لتحسين تجربتك وتحليل الزيارات وفقاً للائحة العامة لحماية البيانات (GDPR). انقر على <strong>قبول الكل</strong> للموافقة أو <strong>رفض</strong> لرفض الملفات غير الضرورية.</p>',
+                'policy_page_slug' => 'about-us',
+                'accept_label' => 'قبول الكل',
+                'reject_label' => 'رفض',
+                'cookie_days' => 365,
+            ],
         ];
         foreach ($arCustomizer as $secKey => $secVals) {
             ThemeSetting::updateOrCreate(

@@ -75,9 +75,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group {{ $errors->has('notify_email') ? 'has-error' : '' }}">
-                            <label for="notify_email">Notification Email <small class="text-muted">(optional)</small></label>
-                            <input type="email" name="notify_email" id="notify_email" class="form-control"
-                                   value="{{ old('notify_email', $form->notify_email ?? '') }}" placeholder="admin@example.com" {{ $readonly }}>
+                            <label for="notify_email">Notification Emails <small class="text-muted">(comma separated, optional)</small></label>
+                            <input type="text" name="notify_email" id="notify_email" class="form-control"
+                                   value="{{ old('notify_email', $form->notify_email ?? '') }}" placeholder="admin@example.com, sales@example.com" {{ $readonly }}>
                             <span class="error_red">{{ $errors->first('notify_email') }}</span>
                         </div>
                     </div>

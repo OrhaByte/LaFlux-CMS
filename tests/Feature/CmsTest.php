@@ -333,5 +333,42 @@ class CmsTest extends TestCase
         \Illuminate\Support\Facades\Cache::forget('recaptcha_site_key');
         \Illuminate\Support\Facades\Cache::forget('recaptcha_secret_key');
     }
+
+    public function test_form_submission_sends_notification_to_multiple_comma_separated_emails(): void
+    {
+        // Verify Laravel 13 MailManager resolves both smtp and array mailers from config/mail.php
+        $this->assertNotNull(\Illuminate\Support\Facades\Mail::mailer('smtp'));
+        $this->assertNotNull(\Illuminate\Support\Facades\Mail::mailer('array'));
+
+        $sentRecipients = [];
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Mail\Events\MessageSent::class, function ($event) use (&$sentRecipients) {
+            foreach ($event->message->getTo() as $addr) {
+                $sentRecipients[] = $addr->getAddress();
+            }
+        });
+
+        $form = CmsForm::create([
+            'name' => 'Sales Inquiry',
+            'slug' => 'sales-inquiry',
+            'submit_label' => 'Send',
+            'success_message' => 'Sent!',
+            'notify_email' => 'one@example.com, two@example.com',
+            'status' => 1,
+        ]);
+        CmsFormField::create([
+            'form_id' => $form->id,
+            'label' => 'Message',
+            'field_name' => 'message',
+            'field_type' => 'text',
+            'is_required' => true,
+            'ordering' => 1,
+        ]);
+
+        $this->post('/cms/form/sales-inquiry/submit', ['message' => 'Hello team'])
+            ->assertRedirect()
+            ->assertSessionHas('cms_form_success_sales-inquiry', 'Sent!');
+
+        $this->assertSame(['one@example.com', 'two@example.com'], $sentRecipients);
+    }
 }
 

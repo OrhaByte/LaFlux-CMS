@@ -36,7 +36,13 @@ class FormController extends Controller
             'slug' => 'nullable|max:200|unique:cms_forms,slug',
             'submit_label' => 'nullable|max:100',
             'success_message' => 'nullable|max:500',
-            'notify_email' => 'nullable|email|max:255',
+            'notify_email' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                foreach (array_filter(array_map('trim', explode(',', (string) $value))) as $addr) {
+                    if (!filter_var($addr, FILTER_VALIDATE_EMAIL)) {
+                        $fail("The {$attribute} contains an invalid email address: {$addr}");
+                    }
+                }
+            }],
             'status' => 'required|in:0,1',
         ]);
 
@@ -91,7 +97,13 @@ class FormController extends Controller
             'slug' => 'nullable|max:200|unique:cms_forms,slug,' . $form->id,
             'submit_label' => 'nullable|max:100',
             'success_message' => 'nullable|max:500',
-            'notify_email' => 'nullable|email|max:255',
+            'notify_email' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                foreach (array_filter(array_map('trim', explode(',', (string) $value))) as $addr) {
+                    if (!filter_var($addr, FILTER_VALIDATE_EMAIL)) {
+                        $fail("The {$attribute} contains an invalid email address: {$addr}");
+                    }
+                }
+            }],
             'status' => 'required|in:0,1',
         ]);
 
