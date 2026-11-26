@@ -304,5 +304,42 @@ Route::group(['prefix' => 'admin/cms', 'middleware' => ['admin', 'auth:admin']],
         'as' => 'extensionsvalley.cms.customizer.reset',
         'uses' => 'ExtensionsValley\Cms\Controllers\ThemeCustomizerController@reset',
     ]);
+
+    // Multilingual XML Sitemap
+    Route::get('/sitemap', [
+        'as' => 'extensionsvalley.cms.sitemap',
+        'uses' => 'ExtensionsValley\Cms\Controllers\SitemapController@index',
+    ]);
+    Route::post('/sitemap/generate', [
+        'as' => 'extensionsvalley.cms.sitemap.generate',
+        'uses' => 'ExtensionsValley\Cms\Controllers\SitemapController@generate',
+    ]);
+
+    // URL Redirects Manager
+    Route::get('/addredirect', [
+        'middleware' => 'acl:add',
+        'as' => 'extensionsvalley.cms.addredirect',
+        'uses' => 'ExtensionsValley\Cms\Controllers\RedirectController@addRedirect',
+    ]);
+    Route::post('/saveredirect', [
+        'middleware' => 'acl:add',
+        'as' => 'extensionsvalley.cms.saveredirect',
+        'uses' => 'ExtensionsValley\Cms\Controllers\RedirectController@saveRedirect',
+    ]);
+    Route::get('/editredirect/{id}', [
+        'middleware' => 'acl:edit',
+        'as' => 'extensionsvalley.cms.editredirect',
+        'uses' => 'ExtensionsValley\Cms\Controllers\RedirectController@editRedirect',
+    ]);
+    Route::post('/updateredirect', [
+        'middleware' => 'acl:edit',
+        'as' => 'extensionsvalley.cms.updateredirect',
+        'uses' => 'ExtensionsValley\Cms\Controllers\RedirectController@updateRedirect',
+    ]);
+    Route::get('/viewredirect/{id}', [
+        'middleware' => 'acl:view',
+        'as' => 'extensionsvalley.cms.viewredirect',
+        'uses' => 'ExtensionsValley\Cms\Controllers\RedirectController@viewRedirect',
+    ]);
 });
 

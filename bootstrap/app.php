@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Intercept configured CMS URL redirects (301/302/307/308) before 404 resolution
+        $middleware->append(\ExtensionsValley\Cms\Middleware\CmsRedirectMiddleware::class);
+
         // Laravel 13 already includes EncryptCookies, StartSession, CSRF, etc. in the default `web` group.
         // Appending them again would double-encrypt cookies and invalidate the admin session on front-end visits.
 

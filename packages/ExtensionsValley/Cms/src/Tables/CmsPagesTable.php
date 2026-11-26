@@ -16,7 +16,7 @@ class CmsPagesTable extends BaseTable
 
     public $listable = [
         'title' => 'Title',
-        'language_code' => 'Lang',
+        'language_code' => 'Lang / SEO',
         'slug' => 'Slug',
         'published_at' => 'Publish Date',
         'status' => 'Status',
@@ -52,7 +52,7 @@ class CmsPagesTable extends BaseTable
         $filter_trashed = $request->get('filter_trashed');
 
         $query = DB::table('cms_pages')
-            ->select('id', 'title', 'language_code', 'slug', 'published_at', 'status', 'created_at');
+            ->select('id', 'title', 'language_code', 'slug', 'content', 'featured_image', 'meta_title', 'meta_keywords', 'meta_description', 'published_at', 'status', 'created_at');
 
         if ($filter_trashed == 1) {
             $query->whereNotNull('deleted_at');
@@ -72,7 +72,7 @@ class CmsPagesTable extends BaseTable
                 }
             })
             ->addColumn('sl', fn ($row) => '<input type="checkbox" name="cid[]" value="' . (int) $row->id . '" class="cid_checkbox flat"/>')
-            ->editColumn('language_code', fn ($row) => '<span class="label label-primary">' . strtoupper(e($row->language_code ?? 'en')) . '</span>')
+            ->editColumn('language_code', fn ($row) => '<span class="label label-primary">' . strtoupper(e($row->language_code ?? 'en')) . '</span>' . \ExtensionsValley\Cms\Helpers\SeoHelper::dotHtml($row))
             ->editColumn('published_at', fn ($row) => $row->published_at ? date('M j, Y H:i', strtotime($row->published_at)) : 'Immediate')
             ->editColumn('status', function ($row) {
                 if ((int) $row->status === 1 && $row->published_at && strtotime($row->published_at) > time()) {

@@ -79,6 +79,7 @@
                             <label for="meta_description">Meta Description</label>
                             <textarea name="meta_description" id="meta_description" rows="3" class="form-control" {{ $readonly }}>{{ old('meta_description', $page->meta_description ?? '') }}</textarea>
                         </div>
+                        @include('Cms::admin.partials.seo_score')
                     </div>
 
                     <div class="col-md-4">

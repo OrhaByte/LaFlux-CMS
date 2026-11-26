@@ -16,7 +16,7 @@ class CmsPostsTable extends BaseTable
 
     public $listable = [
         'title' => 'Title',
-        'language_code' => 'Lang',
+        'language_code' => 'Lang / SEO',
         'category_name' => 'Category',
         'published_at' => 'Publish Date',
         'status' => 'Status',
@@ -53,7 +53,7 @@ class CmsPostsTable extends BaseTable
 
         $query = DB::table('cms_posts as p')
             ->leftJoin('cms_categories as c', 'p.category_id', '=', 'c.id')
-            ->select('p.id', 'p.title', 'p.language_code', 'c.name as category_name', 'p.published_at', 'p.status', 'p.created_at');
+            ->select('p.id', 'p.title', 'p.slug', 'p.content', 'p.featured_image', 'p.meta_title', 'p.meta_keywords', 'p.meta_description', 'p.language_code', 'c.name as category_name', 'p.published_at', 'p.status', 'p.created_at');
 
         if ($filter_trashed == 1) {
             $query->whereNotNull('p.deleted_at');
@@ -74,7 +74,7 @@ class CmsPostsTable extends BaseTable
                 }
             })
             ->addColumn('sl', fn ($row) => '<input type="checkbox" name="cid[]" value="' . (int) $row->id . '" class="cid_checkbox flat"/>')
-            ->editColumn('language_code', fn ($row) => '<span class="label label-primary">' . strtoupper(e($row->language_code ?? 'en')) . '</span>')
+            ->editColumn('language_code', fn ($row) => '<span class="label label-primary">' . strtoupper(e($row->language_code ?? 'en')) . '</span>' . \ExtensionsValley\Cms\Helpers\SeoHelper::dotHtml($row))
             ->editColumn('category_name', fn ($row) => e($row->category_name ?: 'Uncategorized'))
             ->editColumn('published_at', fn ($row) => $row->published_at ? date('M j, Y H:i', strtotime($row->published_at)) : 'Immediate')
             ->editColumn('status', function ($row) {

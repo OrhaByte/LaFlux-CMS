@@ -63,3 +63,8 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'ExtensionsValley\Cms\Controllers\FrontendController@submitForm',
     ]);
 });
+
+Route::get('/sitemap.xml', [
+    'as' => 'cms.frontend.sitemap',
+    'uses' => 'ExtensionsValley\Cms\Controllers\SitemapController@publicXml',
+]);

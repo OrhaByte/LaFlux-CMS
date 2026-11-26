@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use ExtensionsValley\Cms\Helpers\CmsHelper;
+use ExtensionsValley\Cms\Helpers\SeoHelper;
 use ExtensionsValley\Cms\Helpers\ThemeHelper;
 use ExtensionsValley\Cms\Models\Banner;
 use ExtensionsValley\Cms\Models\BannerSlide;
@@ -15,6 +16,7 @@ use ExtensionsValley\Cms\Models\Menu;
 use ExtensionsValley\Cms\Models\MenuItem;
 use ExtensionsValley\Cms\Models\Page;
 use ExtensionsValley\Cms\Models\Post;
+use ExtensionsValley\Cms\Models\RedirectRule;
 use ExtensionsValley\Cms\Models\Tag;
 use ExtensionsValley\Cms\Models\ThemeSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -369,6 +371,44 @@ class CmsTest extends TestCase
             ->assertSessionHas('cms_form_success_sales-inquiry', 'Sent!');
 
         $this->assertSame(['one@example.com', 'two@example.com'], $sentRecipients);
+    }
+
+    public function test_seo_score_helper_sitemap_and_url_redirects(): void
+    {
+        // 1. SEO score statuses (grey, red, green)
+        $this->assertSame('grey', SeoHelper::evaluate(['title' => 'Plain'])['status']);
+        $this->assertSame('red', SeoHelper::evaluate(['title' => 'Short', 'meta_title' => 'Hi'])['status']);
+        $this->assertSame('green', SeoHelper::evaluate([
+            'title' => 'Laravel 13 CMS Guide for Developers',
+            'slug' => 'laravel-13-cms-guide',
+            'meta_title' => 'Laravel 13 CMS Complete Guide for Modern Developers',
+            'meta_keywords' => 'laravel 13, cms, php',
+            'meta_description' => 'Learn how to build fast, multilingual, SEO-friendly websites using Laravel 13 CMS with dynamic themes, shortcodes, and automated XML sitemaps.',
+            'content' => str_repeat('Laravel 13 CMS provides modular packages and SEO tools. ', 20),
+            'featured_image' => 'uploads/cms/sample.jpg',
+        ])['status']);
+
+        // 2. Multilingual Sitemap (/sitemap.xml)
+        Language::create(['name' => 'Arabic', 'code' => 'ar', 'direction' => 'rtl', 'is_default' => false, 'status' => 1]);
+        Page::create(['language_code' => 'en', 'title' => 'Home EN', 'slug' => 'home-en', 'status' => 1, 'published_at' => now()->subMinute()]);
+        Page::create(['language_code' => 'ar', 'title' => 'Home AR', 'slug' => 'home-ar', 'status' => 1, 'published_at' => now()->subMinute()]);
+
+        $this->get('/sitemap.xml')
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertSee('/en/page/home-en', false)
+            ->assertSee('/ar/page/home-ar', false);
+
+        // 3. URL Redirects (301 Permanent + hit counter)
+        $rule = RedirectRule::create([
+            'source_url' => '/legacy-old-page',
+            'target_url' => '/en/page/home-en',
+            'status_code' => 301,
+            'status' => 1,
+        ]);
+
+        $this->get('/legacy-old-page')->assertStatus(301)->assertRedirect(url('/en/page/home-en'));
+        $this->assertSame(1, $rule->fresh()->hits);
     }
 }
 

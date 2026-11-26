@@ -58,6 +58,16 @@ namespace ExtensionsValley\Cms\Events;
                 'menu_text' => 'Theme Customizer',
                 'acl_key' => 'extensionsvalley.cms.customizer',
             ],
+            '10' => [
+                'link' => url('/') . '/admin/cms/sitemap',
+                'menu_text' => 'Sitemap',
+                'acl_key' => 'extensionsvalley.cms.sitemap',
+            ],
+            '11' => [
+                'link' => url('/') . '/admin/ExtensionsValley/cms/list/cms_redirects',
+                'menu_text' => 'Redirects',
+                'acl_key' => 'extensionsvalley.cms.redirects',
+            ],
         ],
     ]);
 });

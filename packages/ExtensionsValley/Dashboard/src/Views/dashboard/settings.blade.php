@@ -127,6 +127,37 @@
                                 </div>
                             </div>
                         </div>
+
+                        <hr/>
+                        <h4><i class="fa fa-line-chart"></i> Analytics &amp; Tag Manager <small class="text-muted">(Injected automatically on front-end theme)</small></h4>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="ga_measurement_id">Google Analytics 4 (Measurement ID)</label>
+                                    <input type="text" name="settings[ga_measurement_id]" id="ga_measurement_id" value="{{ old('settings.ga_measurement_id', \WebConf::get('ga_measurement_id')) }}" class="form-control" placeholder="G-XXXXXXXXXX">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="gtm_container_id">Google Tag Manager (Container ID)</label>
+                                    <input type="text" name="settings[gtm_container_id]" id="gtm_container_id" value="{{ old('settings.gtm_container_id', \WebConf::get('gtm_container_id')) }}" class="form-control" placeholder="GTM-XXXXXXX">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="custom_head_scripts">Custom Head Scripts <small class="text-muted">(Meta verification, Meta Pixel, etc.)</small></label>
+                                    <textarea name="settings[custom_head_scripts]" id="custom_head_scripts" rows="3" class="form-control" placeholder="<script>...</script>">{{ old('settings.custom_head_scripts', \WebConf::get('custom_head_scripts')) }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <div class="form-group">
+                                    <label for="custom_body_scripts">Custom Body Scripts <small class="text-muted">(Loaded after opening &lt;body&gt;)</small></label>
+                                    <textarea name="settings[custom_body_scripts]" id="custom_body_scripts" rows="3" class="form-control" placeholder="<noscript>...</noscript>">{{ old('settings.custom_body_scripts', \WebConf::get('custom_body_scripts')) }}</textarea>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
                                 <a href="javascript:;" onclick="history.go(-1);" class="btn btn-success">Clear</a>
